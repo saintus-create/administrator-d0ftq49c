@@ -43,6 +43,24 @@ navigation:
           - page: Support
             path: docs/pages/support.mdx
             icon: fa-duotone fa-headset
+      - section: Notes archive
+        contents:
+          - page: Development
+            path: docs/pages/notes/development/index.mdx
+          - page: Finance
+            path: docs/pages/notes/finance/index.mdx
+          - page: Health
+            path: docs/pages/notes/health/index.mdx
+          - page: Ideas
+            path: docs/pages/notes/ideas/index.mdx
+          - page: Journal
+            path: docs/pages/notes/journal/index.mdx
+          - page: Tasks
+            path: docs/pages/notes/tasks/index.mdx
+          - page: Travel
+            path: docs/pages/notes/travel/index.mdx
+          - page: Uncategorized
+            path: docs/pages/notes/uncategorized/index.mdx
       - section: Changelog
         contents:
           - changelog: docs/changelog

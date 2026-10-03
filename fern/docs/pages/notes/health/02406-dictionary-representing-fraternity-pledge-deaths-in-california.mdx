@@ -1,0 +1,112 @@
+---
+title: "# Dictionary representing fraternity pledge deaths in California"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p2164"
+created: "20250323T235832"
+modified: "20250323T235834"
+category: "health"
+source: "notes_export.csv"
+---
+
+# Dictionary representing fraternity pledge deaths in California
+fraternity_deaths = \{
+    "Delta Tau Delta - Santa Barbara College (UC Santa Barbara)": \{
+        "tally": 1,
+        "oversight": "IFC",
+        "details": \{"date": "1957-10-07", "name": "Max Caulk", "cause": "Drowned during ritual"\}
+    \},
+    "Pi Kappa Phi - California State University, Chico": \{
+        "tally": 1,
+        "oversight": "IFC",
+        "details": \{"date": "2000-10-06", "name": "Adrian Heideman", "cause": "Alcohol intoxication"\}
+    \},
+    "Chi Tau (local) - California State University, Chico": \{
+        "tally": 1,
+        "oversight": "Local",
+        "details": \{"date": "2005-02-02", "name": "Matthew Carrington", "cause": "Water intoxication"\}
+    \},
+    "Lambda Phi Epsilon - University of California, Irvine": \{
+        "tally": 1,
+        "oversight": "IFC",  # Noted as likely IFC at the time
+        "details": \{"date": "2005-08-28", "name": "Kenny Luong", "cause": "Intense exercise"\}
+    \},
+    "Alpha Kappa Alpha - California State University, Los Angeles": \{
+        "tally": 2,
+        "oversight": "NPHC",
+        "details": \{
+            "date": "2002-09-09",
+            "names": ["Kristin High", "Kenitha Saafir"],
+            "cause": "Drowned during ritual"
+        \}
+    \},
+    "Theta Chi - Fresno State University": \{
+        "tally": 1,
+        "oversight": "IFC",
+        "details": \{"date": "2012-09-03", "name": "Philip Dhanens", "cause": "Alcohol poisoning"\}
+    \},
+    "Pi Kappa Phi - California State University, Northridge": \{
+        "tally": 1,
+        "oversight": "IFC",
+        "details": \{"date": "2014-07-01", "name": "Armando Villa", "cause": "Heat stroke"\}
+    \},
+    "Alpha Phi Alpha - University of California, Riverside": \{
+        "tally": 1,
+        "oversight": "NPHC",
+        "details": \{"date": "2018-09-28", "name": "Tyler Hilliard", "cause": "Suspected hazing"\}
+    \},
+    "Sigma Alpha Epsilon - University of California, Irvine": \{
+        "tally": 1,
+        "oversight": "IFC",
+        "details": \{"date": "2019-01-12", "name": "Noah Domingo", "cause": "Alcohol intoxication"\}
+    \},
+    "Chi Sigma Phi - California State University, Fullerton": \{
+        "tally": 1,
+        "oversight": "Local/Uncertain",  # Uncertain, possibly IFC or local
+        "details": \{"date": "2019-03-17", "name": "Bea Castro", "cause": "Alcohol intoxication"\}
+    \},
+    "Phi Gamma Delta - San Diego State University": \{
+        "tally": 1,
+        "oversight": "IFC",
+        "details": \{"date": "2019-11-06", "name": "Dylan Hernandez", "cause": "Head injury"\}
+    \}
+\}
+
+# Function to display the data
+def display_fraternity_data(data):
+    print("Fraternity Pledge Deaths in California (1957�2019):")
+    print("-" * 50)
+    total_deaths = 0
+    oversight_counts = \{"IFC": 0, "NPHC": 0, "Local": 0, "Local/Uncertain": 0\}
+
+    for chapter, info in data.items():
+        tally = info["tally"]
+        oversight = info["oversight"]
+        details = info["details"]
+        
+        print(f"Chapter: \{chapter\}")
+        print(f"  Tally: \{tally\}")
+        print(f"  Oversight: \{oversight\}")
+        if tally == 2:  # Special case for Alpha Kappa Alpha
+            print(f"  Date: \{details['date']\}")
+            print(f"  Names: \{', '.join(details['names'])\}")
+            print(f"  Cause: \{details['cause']\}")
+        else:
+            print(f"  Date: \{details['date']\}")
+            print(f"  Name: \{details['name']\}")
+            print(f"  Cause: \{details['cause']\}")
+        print()
+
+        total_deaths += tally
+        oversight_counts[oversight] = oversight_counts.get(oversight, 0) + tally
+
+    # Summary
+    print("-" * 50)
+    print(f"Total Deaths: \{total_deaths\}")
+    print(f"Total Chapters: \{len(data)\}")
+    print("\nBreakdown by Oversight:")
+    for oversight, count in oversight_counts.items():
+        if count \> 0:
+            print(f"  \{oversight\}: \{count\} deaths")
+
+# Run the display function
+if __name__ == "__main__":
+    display_fraternity_data(fraternity_deaths)

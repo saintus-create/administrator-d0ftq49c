@@ -1,0 +1,81 @@
+---
+title: "document.addEventListener(\"mousemove\", (e) => {"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p799"
+created: "20250814T160649"
+modified: "20250814T184338"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+document.addEventListener("mousemove", (e) =\> \{
+  const orbs = document.querySelectorAll(".orb");
+  orbs.forEach((orb, index) =\> \{
+    const speed = 0.02 * (index + 1); // Vary speed per orb
+    const x = (window.innerWidth / 2 - e.clientX) * speed;
+    const y = (window.innerHeight / 2 - e.clientY) * speed;
+    orb.style.transform = `translate($\{x\}px, $\{y\}px)`;
+  \});
+\});'use client'
+
+    
+    if (!newMinimized) \{
+      // Expanding - animate down
+      setIsMinimized(false)
+      setIsExpanding(true)
+      sessionStorage.setItem('deploy-banner-minimized', 'false')
+      
+      // After animation completes, clear expanding state
+      setTimeout(() =\> \{
+        setIsExpanding(false)
+      \}, 300) // Match animation duration
+    \} else \{
+      // Minimizing - animate up first
+      setIsAnimating(true)
+      
+      // After animation completes, actually minimize
+      setTimeout(() =\> \{
+        setIsMinimized(true)
+        setIsAnimating(false)
+        sessionStorage.setItem('deploy-banner-minimized', 'true')
+      \}, 300) // Match animation duration
+    \}
+  \}
+
+  if (!isVisible) return null
+
+  return (
+    \<\>
+      \{isMinimized ? (
+        // Minimized state - floating toggle button
+        \<div className="fixed top-4 right-4 z-50"\>
+          \<Button
+            variant="outline"
+            size="sm"
+            onClick=\{handleToggle\}
+            className="h-8 w-8 p-0 bg-background border-border shadow-lg hover:bg-muted"
+          \>
+            \<ChevronDownIcon className="h-4 w-4 rotate-180" /\>
+            \<span className="sr-only"\>Expand banner\</span\>
+          \</Button\>
+        \</div\>
+      ) : (
+        // Expanded state - full banner
+        \<div className=\{`fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border text-foreground $\{
+          isAnimating ? 'animate-slide-out-up' : isExpanding ? 'animate-slide-in-down' : ''
+        \}`\}\>
+          \<div className="py-3 px-4"\>
+            \<div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4"\>
+              \<div className="flex flex-col gap-1 flex-1"\>
+                \<div className="text-sm text-muted-foreground"\>
+                  
+                \</div\>
+              \</div\>
+              \<div className="flex items-center gap-3 sm:flex-shrink-0"\>
+              \</div\>
+            \</div\>
+          \</div\>
+        \</div\>
+      )\}
+    \</\>
+  )
+\}

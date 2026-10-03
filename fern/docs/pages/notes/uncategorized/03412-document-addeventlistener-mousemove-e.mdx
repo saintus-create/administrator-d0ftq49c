@@ -1,0 +1,18 @@
+---
+title: "document.addEventListener(\"mousemove\", (e) => {"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p800"
+created: "20250814T160729"
+modified: "20250814T160731"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+document.addEventListener("mousemove", (e) =\> \{
+  const orbs = document.querySelectorAll(".orb");
+  orbs.forEach((orb, index) =\> \{
+    const speed = 0.02 * (index + 1); // Vary speed per orb
+    const x = (window.innerWidth / 2 - e.clientX) * speed;
+    const y = (window.innerHeight / 2 - e.clientY) * speed;
+    orb.style.transform = `translate($\{x\}px, $\{y\}px)`;
+  \});
+\});

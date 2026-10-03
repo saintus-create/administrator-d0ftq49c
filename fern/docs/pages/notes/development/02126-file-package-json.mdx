@@ -1,0 +1,798 @@
+---
+title: "// FILE: package.json"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p834"
+created: "20250803T214755"
+modified: "20250803T215728"
+category: "development"
+source: "notes_export.csv"
+---
+
+// FILE: package.json
+\{
+  "name": "codewave-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": \{
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate"
+  \},
+  "dependencies": \{
+    "@auth/prisma-adapter": "^1.3.3",
+    "@prisma/client": "^5.10.2",
+    "@radix-ui/react-slot": "^1.0.2",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.344.0",
+    "next": "14.1.1",
+    "next-auth": "5.0.0-beta.13",
+    "openai": "^4.28.4",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-textarea-autosize": "^8.5.3",
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss-animate": "^1.0.7"
+  \},
+  "devDependencies": \{
+    "@tailwindcss/typography": "^0.5.10",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.1",
+    "postcss": "^8",
+    "prisma": "^5.10.2",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  \}
+\}
+
+// FILE: .env.local
+# -------------------------------------
+# --- Codewave Studio Configuration ---
+# -------------------------------------
+# This is the final configuration. Fill these values out for the software to function.
+
+# 1. DATABASE & AUTH (Required for user accounts and saving projects)
+# Get this from your database provider (e.g., Supabase, Neon, Railway)
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require"
+
+# Generate a secret: `openssl rand -hex 32` on your command line
+AUTH_SECRET=""
+AUTH_URL="http://localhost:3000"
+
+# Create a GitHub OAuth App here: https://github.com/settings/developers
+AUTH_GITHUB_ID=""
+AUTH_GITHUB_SECRET=""
+
+
+# 2. AI GENERATION API (The core of the generator)
+# Get from: https://platform.openai.com/account/api-keys
+OPENAI_API_KEY=""
+
+// FILE: next.config.mjs
+/** @type \{import('next').NextConfig\} */
+const nextConfig = \{
+    // No specific Next.js config needed for this app
+\};
+
+export default nextConfig;
+
+// FILE: tailwind.config.ts
+import type \{ Config \} from "tailwindcss"
+
+const config = \{
+  content: [
+    './src/**/*.\{ts,tsx\}',
+	],
+  theme: \{
+    extend: \{
+      fontFamily: \{
+        sans: ['var(--font-inter)', 'sans-serif'],
+      \},
+      colors: \{
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: \{
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        \},
+        secondary: \{
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        \},
+        muted: \{
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        \},
+        accent: \{
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        \},
+      \}
+    \},
+  \},
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+\} satisfies Config
+
+export default config
+
+// FILE: tsconfig.json
+\{
+  "compilerOptions": \{
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      \{
+        "name": "next"
+      \}
+    ],
+    "paths": \{
+      "@/*": ["./src/*"]
+    \}
+  \},
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+\}
+
+// FILE: postcss.config.js
+module.exports = \{
+  plugins: \{
+    tailwindcss: \{\},
+    autoprefixer: \{\},
+  \},
+\}
+
+// FILE: prisma/schema.prisma
+// This schema is identical to the previous one, defining the core data structure.
+generator client \{
+  provider = "prisma-client-js"
+\}
+
+datasource db \{
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+\}
+
+model User \{
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  projects      Project[]
+\}
+
+model Project \{
+  id        String   @id @default(cuid())
+  name      String
+  prompt    String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files     File[]
+\}
+
+model File \{
+  id        String   @id @default(cuid())
+  path      String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, path])
+\}
+
+model Account \{
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+\}
+
+model Session \{
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+\}
+
+model VerificationToken \{
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+\}
+
+// FILE: src/lib/auth.ts
+import NextAuth from "next-auth"
+import GitHub from "next-auth/providers/github"
+import \{ PrismaAdapter \} from "@auth/prisma-adapter"
+import \{ db \} from "@/lib/db"
+
+export const \{ handlers, auth, signIn, signOut \} = NextAuth(\{
+  adapter: PrismaAdapter(db),
+  providers: [
+    GitHub(\{
+      clientId: process.env.AUTH_GITHUB_ID,
+      clientSecret: process.env.AUTH_GITHUB_SECRET,
+    \}),
+  ],
+  callbacks: \{
+    session(\{ session, user \}) \{
+      if (session.user) \{
+        session.user.id = user.id;
+      \}
+      return session;
+    \},
+  \},
+\})
+
+// FILE: src/lib/db.ts
+import \{ PrismaClient \} from '@prisma/client'
+
+declare global \{
+  var prisma: PrismaClient | undefined
+\}
+
+export const db =
+  global.prisma ||
+  new PrismaClient(\{
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  \})
+
+if (process.env.NODE_ENV !== 'production') \{
+  global.prisma = db
+\}
+
+// FILE: src/app/globals.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base \{
+  :root \{
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
+  \}
+\}
+
+@layer base \{
+  * \{
+    @apply border-border;
+  \}
+  body \{
+    @apply bg-background text-foreground;
+  \}
+\}
+
+// FILE: src/app/layout.tsx
+import type \{ Metadata \} from "next";
+import \{ Inter \} from "next/font/google";
+import "./globals.css";
+import \{ auth \} from "@/lib/auth";
+import \{ AppLayout \} from "@/components/AppLayout";
+import \{ SignInPage \} from "@/components/SignInPage";
+
+const inter = Inter(\{ subsets: ["latin"], variable: '--font-inter' \});
+
+export const metadata: Metadata = \{
+  title: "Codewave Studio",
+  description: "Generate entire applications from a single prompt.",
+\};
+
+export default async function RootLayout(\{
+  children,
+\}: Readonly\<\{
+  children: React.ReactNode;
+\}\>) \{
+  const session = await auth();
+
+  return (
+    \<html lang="en" className=\{`$\{inter.variable\} h-full antialiased`\}\>
+      \<body className="h-full"\>
+        \{session?.user ? \<AppLayout\>\{children\}\</AppLayout\> : \<SignInPage /\>\}
+      \</body\>
+    \</html\>
+  );
+\}
+
+// FILE: src/app/page.tsx
+import \{ redirect \} from "next/navigation";
+
+export default function HomePage() \{
+  // The root page's only job is to redirect to the main generator interface.
+  redirect('/generate');
+\}
+
+// FILE: src/app/generate/page.tsx
+import \{ ChatInterface \} from "@/components/ChatInterface";
+
+export default function GeneratePage() \{
+  return \<ChatInterface /\>;
+\}
+
+// FILE: src/app/p/[projectId]/page.tsx
+import \{ db \} from "@/lib/db";
+import \{ notFound \} from "next/navigation";
+import \{ FileViewer \} from "@/components/FileViewer";
+import \{ auth \} from "@/lib/auth";
+
+export default async function ProjectPage(\{ params \}: \{ params: \{ projectId: string \} \}) \{
+  const session = await auth();
+  const project = await db.project.findFirst(\{
+    where: \{ 
+      id: params.projectId,
+      userId: session?.user?.id
+    \},
+    include: \{
+      files: \{
+        orderBy: \{
+          path: 'asc'
+        \}
+      \}
+    \}
+  \});
+
+  if (!project) \{
+    notFound();
+  \}
+
+  return \<FileViewer project=\{project\} files=\{project.files\} /\>;
+\}
+
+// FILE: src/app/api/generate-app/route.ts
+// This backend API route is the powerful engine. Its logic is sound and remains unchanged.
+import \{ NextResponse \} from 'next/server';
+import \{ auth \} from '@/lib/auth';
+import \{ db \} from '@/lib/db';
+import OpenAI from 'openai';
+
+const openai = new OpenAI(\{
+  apiKey: process.env.OPENAI_API_KEY,
+\});
+
+const PLANNER_PROMPT = `
+You are an expert full-stack software architect. A user wants to build an application.
+Your task is to deconstruct their request and create a detailed, actionable plan for an AI code generator.
+The user's prompt is: "\{USER_PROMPT\}"
+
+Based on this prompt, you must:
+1.  Invent a short, descriptive, kebab-case name for the application (e.g., "knowledge-base", "todo-app").
+2.  Choose the most appropriate tech stack. Always use: "Next.js App Router", "TypeScript", "Tailwind CSS".
+3.  Define the complete file structure needed for this application. Be specific. Include everything from package.json to component files, content files, and CSS.
+4.  For each file, write a "generation_prompt" that an AI code generator (like GPT-4) can use to create the file's content. This prompt should be extremely clear, specifying the exact libraries, functions, and styling to use. For code files, demand only raw code output. For content files (like .mdx), demand realistic content based on the user's prompt.
+
+Output your response as a single, valid JSON object. Do not include any text or markdown formatting before or after the JSON.
+`;
+
+export async function POST(request: Request) \{
+  const session = await auth();
+  if (!session?.user?.id) \{
+    return NextResponse.json(\{ error: 'Unauthorized' \}, \{ status: 401 \});
+  \}
+
+  const \{ prompt \} = await request.json();
+  if (!prompt) \{
+    return NextResponse.json(\{ error: 'Prompt is required' \}, \{ status: 400 \});
+  \}
+
+  try \{
+    const plannerResponse = await openai.chat.completions.create(\{
+      model: 'gpt-4-turbo-preview',
+      messages: [\{ role: 'user', content: PLANNER_PROMPT.replace('\{USER_PROMPT\}', prompt) \}],
+      response_format: \{ type: 'json_object' \},
+    \});
+
+    const plan = JSON.parse(plannerResponse.choices[0].message.content || '\{\}');
+    if (!plan.appName || !plan.filePlan) \{
+      throw new Error('AI failed to generate a valid plan.');
+    \}
+
+    const project = await db.project.create(\{
+      data: \{
+        name: plan.appName,
+        prompt: prompt,
+        userId: session.user.id,
+      \},
+    \});
+
+    const fileGenerationPromises = plan.filePlan.map(async (fileToGen: \{ path: string; generation_prompt: string \}) =\> \{
+      const fileContentResponse = await openai.chat.completions.create(\{
+        model: 'gpt-4-turbo-preview',
+        messages: [\{ role: 'user', content: `Generate the content for the file path "$\{fileToGen.path\}". Strictly output only the raw content for the file, with no explanation, introduction, or markdown formatting. The requirements are: $\{fileToGen.generation_prompt\}` \}],
+      \});
+      const content = fileContentResponse.choices[0].message.content || '';
+      return \{
+        path: fileToGen.path,
+        content: content,
+        projectId: project.id,
+      \};
+    \});
+
+    const generatedFiles = await Promise.all(fileGenerationPromises);
+
+    await db.file.createMany(\{
+      data: generatedFiles,
+    \});
+
+    return NextResponse.json(\{ projectId: project.id \});
+
+  \} catch (error) \{
+    console.error('Error during app generation:', error);
+    return NextResponse.json(\{ error: 'Failed to generate application.' \}, \{ status: 500 \});
+  \}
+\}
+
+// FILE: src/components/AppLayout.tsx
+import \{ Sidebar \} from "./Sidebar";
+import \{ db \} from "@/lib/db";
+import \{ auth \} from "@/lib/auth";
+
+export async function AppLayout(\{ children \}: \{ children: React.ReactNode \}) \{
+  const session = await auth();
+  const projects = await db.project.findMany(\{
+    where: \{ userId: session?.user?.id \},
+    orderBy: \{ createdAt: 'desc' \},
+  \});
+
+  return (
+    \<div className="flex h-full"\>
+      \<Sidebar projects=\{projects\} user=\{session?.user\} /\>
+      \<main className="flex-1 flex flex-col h-full"\>
+        \{children\}
+      \</main\>
+    \</div\>
+  );
+\}
+
+// FILE: src/components/Sidebar.tsx
+'use client';
+
+import Link from "next/link";
+import \{ usePathname \} from "next/navigation";
+import \{ signOut \} from "next-auth/react";
+import \{ Project \} from "@prisma/client";
+import \{ User \} from "next-auth";
+import \{ LogOut, Plus, Code2 \} from "lucide-react";
+
+export function Sidebar(\{ projects, user \}: \{ projects: Project[], user?: User \}) \{
+  const pathname = usePathname();
+
+  return (
+    \<aside className="w-72 bg-secondary/50 border-r flex flex-col p-4"\>
+      \<div className="p-2 mb-4"\>
+        \<h1 className="text-2xl font-bold"\>Codewave\</h1\>
+      \</div\>
+      \<nav className="flex-grow"\>
+        \<Link href="/generate" className="flex items-center gap-3 px-3 py-2 rounded-md text-primary bg-primary/10 font-semibold mb-4"\>
+          \<Plus size=\{18\} /\>
+          New Generation
+        \</Link\>
+        \<h2 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2"\>Projects\</h2\>
+        \<ul className="space-y-1"\>
+          \{projects.map(project =\> (
+            \<li key=\{project.id\}\>
+              \<Link
+                href=\{`/p/$\{project.id\}`\}
+                className=\{`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors $\{pathname === `/p/$\{project.id\}` ? 'bg-accent text-accent-foreground' : 'hover:bg-accent'\}`\}
+              \>
+                \<Code2 size=\{16\} className="text-muted-foreground" /\>
+                \<span className="truncate"\>\{project.name\}\</span\>
+              \</Link\>
+            \</li\>
+          ))\}
+        \</ul\>
+      \</nav\>
+      \<div className="border-t -mx-4 mt-4 p-4"\>
+        \<div className="flex items-center gap-3"\>
+          \<img src=\{user?.image || ''\} alt=\{user?.name || ''\} className="w-8 h-8 rounded-full" /\>
+          \<div className="flex-grow truncate"\>
+            \<p className="text-sm font-semibold truncate"\>\{user?.name\}\</p\>
+            \<p className="text-xs text-muted-foreground truncate"\>\{user?.email\}\</p\>
+          \</div\>
+          \<button onClick=\{() =\> signOut()\} className="p-2 rounded-md hover:bg-accent"\>
+            \<LogOut size=\{16\} /\>
+          \</button\>
+        \</div\>
+      \</div\>
+    \</aside\>
+  );
+\}
+
+// FILE: src/components/ChatInterface.tsx
+'use client';
+
+import \{ useState, useRef, useEffect \} from "react";
+import \{ useRouter \} from "next/navigation";
+import Textarea from 'react-textarea-autosize';
+import \{ SendHorizonal, Loader2 \} from "lucide-react";
+import Link from "next/link";
+
+interface Message \{
+  role: 'user' | 'ai' | 'status';
+  content: string;
+\}
+
+export function ChatInterface() \{
+  const [messages, setMessages] = useState\<Message[]\>([
+    \{ role: 'ai', content: "What application would you like to build today? Be as descriptive as you'd like." \}
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const messagesEndRef = useRef\<HTMLDivElement\>(null);
+
+  useEffect(() =\> \{
+    messagesEndRef.current?.scrollIntoView(\{ behavior: "smooth" \});
+  \}, [messages]);
+
+  const handleSubmit = async (e: React.FormEvent) =\> \{
+    e.preventDefault();
+    if (!input || isLoading) return;
+
+    const userMessage: Message = \{ role: 'user', content: input \};
+    const statusMessage: Message = \{ role: 'status', content: 'Thinking...' \};
+    setMessages(prev =\> [...prev, userMessage, statusMessage]);
+    setInput("");
+    setIsLoading(true);
+
+    try \{
+      const response = await fetch('/api/generate-app', \{
+        method: 'POST',
+        headers: \{ 'Content-Type': 'application/json' \},
+        body: JSON.stringify(\{ prompt: input \}),
+      \});
+
+      if (!response.ok) \{
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An unknown error occurred.');
+      \}
+
+      const \{ projectId \} = await response.json();
+      const successMessage: Message = \{ role: 'ai', content: `I've finished generating your application. You can view the files here: [View Project](/p/$\{projectId\})` \};
+      setMessages(prev =\> [...prev.slice(0, -1), successMessage]);
+      router.refresh(); // Refresh sidebar with new project
+
+    \} catch (err: any) \{
+      const errorMessage: Message = \{ role: 'ai', content: `I'm sorry, I ran into an error: $\{err.message\}` \};
+      setMessages(prev =\> [...prev.slice(0, -1), errorMessage]);
+    \} finally \{
+      setIsLoading(false);
+    \}
+  \};
+
+  return (
+    \<div className="flex flex-col h-full"\>
+      \<div className="flex-grow overflow-y-auto p-4 md:p-6"\>
+        \<div className="max-w-3xl mx-auto space-y-6"\>
+          \{messages.map((msg, index) =\> (
+            \<div key=\{index\} className=\{`flex items-start gap-4 $\{msg.role === 'user' ? 'justify-end' : ''\}`\}\>
+              \{msg.role === 'ai' && \<div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm flex-shrink-0"\>AI\</div\>\}
+              \{msg.role === 'status' && \<div className="w-8 h-8 flex items-center justify-center flex-shrink-0"\>\<Loader2 className="animate-spin text-muted-foreground" /\>\</div\>\}
+              
+              \<div className=\{`prose prose-lg max-w-none rounded-lg p-4 $\{
+                msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'
+              \}`\}\>
+                \{msg.content.split(/(\[.*?\]\(.*?\))/g).map((part, i) =\> \{
+                  const match = /\[(.*?)\]\((.*?)\)/.exec(part);
+                  if (match) \{
+                    return \<Link key=\{i\} href=\{match[2]\} className="font-semibold underline"\>\{match[1]\}\</Link\>;
+                  \}
+                  return part;
+                \})\}
+              \</div\>
+            \</div\>
+          ))\}
+          \<div ref=\{messagesEndRef\} /\>
+        \</div\>
+      \</div\>
+      \<div className="border-t bg-background p-4"\>
+        \<form onSubmit=\{handleSubmit\} className="max-w-3xl mx-auto flex items-center gap-4"\>
+          \<Textarea
+            value=\{input\}
+            onChange=\{(e) =\> setInput(e.target.value)\}
+            onKeyDown=\{(e) =\> \{
+              if (e.key === 'Enter' && !e.shiftKey) \{
+                e.preventDefault();
+                handleSubmit(e);
+              \}
+            \}\}
+            placeholder="e.g., a minimal blog about space exploration"
+            className="w-full resize-none p-3 border rounded-lg focus:ring-2 focus:ring-ring"
+            minRows=\{1\}
+            maxRows=\{5\}
+            disabled=\{isLoading\}
+          /\>
+          \<button type="submit" disabled=\{isLoading || !input\} className="p-3 rounded-full bg-primary text-primary-foreground disabled:bg-muted disabled:text-muted-foreground"\>
+            \<SendHorizonal size=\{20\} /\>
+          \</button\>
+        \</form\>
+      \</div\>
+    \</div\>
+  );
+\}
+
+// FILE: src/components/FileViewer.tsx
+'use client';
+
+import \{ useState \} from 'react';
+import \{ Project, File \} from '@prisma/client';
+import \{ Code2 \} from 'lucide-react';
+
+export function FileViewer(\{ project, files \}: \{ project: Project, files: File[] \}) \{
+  const [activeFile, setActiveFile] = useState\<File | null\>(files[0] || null);
+
+  return (
+    \<div className="flex h-full"\>
+      \<aside className="w-72 bg-secondary/50 border-r p-4 flex-shrink-0"\>
+        \<h2 className="text-lg font-semibold mb-2 truncate"\>\{project.name\}\</h2\>
+        \<p className="text-sm text-muted-foreground mb-4 italic"\>"\{project.prompt\}"\</p\>
+        \<nav\>
+          \<ul\>
+            \{files.map(file =\> (
+              \<li key=\{file.id\}\>
+                \<button
+                  onClick=\{() =\> setActiveFile(file)\}
+                  className=\{`w-full text-left px-3 py-2 rounded-md text-sm font-mono flex items-center gap-3 transition-colors $\{activeFile?.id === file.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent'\}`\}
+                \>
+                  \<Code2 size=\{16\} className="flex-shrink-0" /\>
+                  \<span className="truncate"\>\{file.path\}\</span\>
+                \</button\>
+              \</li\>
+            ))\}
+          \</ul\>
+        \</nav\>
+      \</aside\>
+      \<main className="flex-1 bg-white"\>
+        \{activeFile ? (
+          \<div className="h-full flex flex-col"\>
+            \<div className="p-3 border-b bg-muted text-sm font-mono"\>\{activeFile.path\}\</div\>
+            \<div className="p-4 overflow-auto flex-grow"\>
+              \<pre className="text-sm"\>
+                \<code\>
+                  \{activeFile.content\}
+                \</code\>
+              \</pre\>
+            \</div\>
+          \</div\>
+        ) : (
+          \<div className="flex items-center justify-center h-full text-muted-foreground"\>
+            Select a file to view its content
+          \</div\>
+        )\}
+      \</main\>
+    \</div\>
+  );
+\}
+
+// FILE: src/components/SignInPage.tsx
+import \{ signIn \} from "@/lib/auth";
+import \{ Button \} from "./ui/button";
+import \{ Code2 \} from "lucide-react";
+
+export function SignInPage() \{
+  return (
+    \<div className="flex flex-col items-center justify-center min-h-screen bg-secondary/50"\>
+      \<div className="text-center p-8"\>
+        \<Code2 className="mx-auto h-12 w-12 text-primary mb-4" /\>
+        \<h1 className="text-4xl font-bold mb-2"\>Welcome to Codewave Studio\</h1\>
+        \<p className="text-muted-foreground mb-6"\>Sign in to begin generating applications.\</p\>
+        \<form action=\{async () =\> \{ "use server"; await signIn("github"); \}\}\>
+          \<Button type="submit" size="lg"\>Sign In with GitHub\</Button\>
+        \</form\>
+      \</div\>
+    \</div\>
+  );
+\}
+
+// FILE: src/components/ui/button.tsx
+// This is a standard UI component, no changes needed.
+import * as React from "react"
+import \{ Slot \} from "@radix-ui/react-slot"
+import \{ cva, type VariantProps \} from "class-variance-authority"
+import \{ cn \} from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  \{
+    variants: \{
+      variant: \{
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      \},
+      size: \{
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      \},
+    \},
+    defaultVariants: \{
+      variant: "default",
+      size: "default",
+    \},
+  \}
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes\<HTMLButtonElement\>,
+    VariantProps\<typeof buttonVariants\> \{
+  asChild?: boolean
+\}
+
+const Button = React.forwardRef\<HTMLButtonElement, ButtonProps\>(
+  (\{ className, variant, size, asChild = false, ...props \}, ref) =\> \{
+    const Comp = asChild ? Slot : "button"
+    return (
+      \<Comp
+        className=\{cn(buttonVariants(\{ variant, size, className \}))\}
+        ref=\{ref\}
+        \{...props\}
+      /\>
+    )
+  \}
+)
+Button.displayName = "Button"
+
+export \{ Button, buttonVariants \}

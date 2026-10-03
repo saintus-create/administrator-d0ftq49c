@@ -1,0 +1,26 @@
+---
+title: "---"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p344"
+created: "20251221T11603"
+modified: "20251221T11604"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+---
+name: gpt-oss-120b
+version: 1.1.0
+schema: v1
+models:
+  - name: gpt-oss-120b
+    provider: openrouter
+    model: openai/gpt-oss-120b
+    apiKey: $\{\{ inputs.OPENROUTER_API_KEY \}\}
+    defaultCompletionOptions:
+      contextLength: 131000
+    capabilities:
+      - tool_use
+    roles:
+      - apply
+      - chat
+      - edit

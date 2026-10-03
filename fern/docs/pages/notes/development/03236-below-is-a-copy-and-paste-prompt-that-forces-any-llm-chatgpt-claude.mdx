@@ -1,0 +1,87 @@
+---
+title: "Below is a copy-and-paste prompt that forces any LLM (ChatGPT, Claude�"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p460"
+created: "20251103T213329"
+modified: "20251103T213332"
+category: "development"
+source: "notes_export.csv"
+---
+
+Below is a copy-and-paste prompt that forces any LLM (ChatGPT, Claude, Cursor, Grok, etc.) to respect a real Readymag-style grid instead of �throwing things together.�It works because it gives the AI exact column/row numbers, spacing rules, and a visual map � the same way Readymag�s editor does.
+
+1. The �Grid-Only� Prompt (use this every time)
+You are a Readymag senior designer. Build a **single Svelte + Tailwind page** using a **strict 12-column, 8 px baseline grid**.  
+
+RULES (never break them):
+1. **Grid only** � every element must be placed with `col-span-X`, `col-start-Y`, `row-start-Z`.
+2. **Spacing** � only `8px, 16px, 24px, 32px` (Tailwind `gap-1` ? `gap-4`).
+3. **No cards, no shadows, no rounded corners, no borders**.
+4. **Typography** � Inter, 3 weights max. Body 18 px / 28 px line-height. Headlines flush left.
+5. **Images** � full-bleed to grid edges, no padding.
+6. **CTA** � underlined text link only.
+
+OUTPUT FORMAT:
+- First, a **text diagram** of the 12-column grid showing where each element lives.
+- Then, the **exact Svelte code** (no explanations).
+
+CONTENT TO PLACE:
+- Logo (text �Planet Earth�) ? columns 1-3
+- Headline (the long paragraph) ? columns 4-10
+- Image (any placeholder) ? columns 8-12, same row as headline
+- CTA �Read more ?� ? column 4, one row below headline
+
+2. What the AI must return (example)
+Text Diagram
+1 2 3   4 5 6 7 8 9 10 11 12
+?????????????????????????????
+? L ?   ?     HEADLINE      ?
+? o ?   ?     (cols 4-10)   ?
+? g ?   ?                   ?
+? o ?   ?         IMAGE     ?
+?????????????????????????????
+                ?  (cols 8-12)?
+                ???????????????
+Svelte Code
+  
+  
+Planet Earth
+
+  
+  
+    We offer an all-inclusive experience featuring stellar amenities like free Wi-Fi, majestic waterfalls, snow-covered mountains, warm sandy beaches, and an endless buffet of delicious food options.
+  
+
+  
+  
+    Read more ?
+  
+
+  
+  
+?
+
+
+3. How to Use It (3-step workflow)
+?
+Result: The AI can no longer �throw things together.� It is forced to count columns and snap to the grid.
+
+4. Bonus: Make the Grid Visible While You Work
+Add this to +layout.svelte (press G to toggle):
+e.key==='g' && toggle()\} /\>
+
+\{#if show\}
+  
+    
+      \{#each Array(13) as _\}
+
+\{/each\}
+    
+  
+\{/if\}
+
+
+
+TL;DR
+Tell the AI exactly where to put every pixel using column numbers and a diagram.It can�t ignore a grid if you make the grid part of the prompt.
+
+Want the full starter zip with the toggleable grid + prompt template?Just say �send grid prompt starter� and I�ll give you a ready-to-run SvelteKit folder.

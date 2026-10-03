@@ -1,0 +1,152 @@
+---
+title: "As justice Brandeis noted: Speech many find outright dangerous is�"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p2464"
+created: "20241219T222108"
+modified: "20260515T131916"
+category: "development"
+source: "notes_export.csv"
+---
+
+As justice Brandeis noted: Speech many find outright dangerous is pronounced during times of uncertainty, division, polarization, and fear � challenges we unfortunately face today.
+But the answer cannot punishment for speech he finds repugnant.
+If there be time to expose through discussion, the falsehoods and fallacies, to avert the evil by the processes of educated discussion�the remedy to be applied is more speech *not enforced silence* 
+(F Whitney v. California, 274 U.S. 357, 377, 47 S.Ct. 641, 71-L.Ed. 1095 (1927) (Brandeis, J., concurring) as a matter of public interest. 
+
+
+
+
+
+
+
+
+
+
+mkdir -p app/docs/\[\[...slug\]\]
+mkdir -p content/docs
+mkdir -p lib
+mkdir -p components
+
+# Create app/layout.tsx
+cat \> app/layout.tsx \<\< 'EOF'
+import \{ RootProvider \} from 'fumadocs-ui/provider/next';
+import type \{ ReactNode \} from 'react';
+
+export default function Layout(\{ children \}: \{ children: ReactNode \}) \{
+  return (
+    \<html lang="en"\>
+      \<body\>
+        \<RootProvider\>\{children\}\</RootProvider\>
+      \</body\>
+    \</html\>
+  );
+\}
+EOF
+
+# Create app/docs/layout.tsx
+cat \> app/docs/layout.tsx \<\< 'EOF'
+import \{ DocsLayout \} from 'fumadocs-ui/layouts/docs';
+import \{ baseOptions \} from '@/lib/layout.shared';
+import \{ source \} from '@/lib/source';
+import type \{ ReactNode \} from 'react';
+
+export default function Layout(\{ children \}: \{ children: ReactNode \}) \{
+  return (
+    \<DocsLayout \{...baseOptions()\} tree=\{source.getPageTree()\}\>
+      \{children\}
+    \</DocsLayout\>
+  );
+\}
+EOF
+
+# Create app/docs/[[...slug]]/page.tsx
+cat \> app/docs/\[\[...slug\]\]/page.tsx \<\< 'EOF'
+import \{ source \} from '@/lib/source';
+import \{
+  DocsBody,
+  DocsDescription,
+  DocsPage,
+  DocsTitle,
+\} from 'fumadocs-ui/page';
+import \{ notFound \} from 'next/navigation';
+import type \{ Metadata \} from 'next';
+
+export default async function Page(props: \{ params: Promise\<\{ slug?: string[] \}\> \}) \{
+  const params = await props.params;
+  const page = source.getPage(params.slug);
+  if (!page) notFound();
+
+  const MDX = page.data.body;
+
+  return (
+    \<DocsPage toc=\{page.data.toc\} full=\{page.data.full\}\>
+      \<DocsTitle\>\{page.data.title\}\</DocsTitle\>
+      \<DocsDescription\>\{page.data.description\}\</DocsDescription\>
+      \<DocsBody\>
+        \<MDX /\>
+      \</DocsBody\>
+    \</DocsPage\>
+  );
+\}
+
+export async function generateStaticParams() \{
+  return source.generateParams();
+\}
+
+export async function generateMetadata(
+  props: \{ params: Promise\<\{ slug?: string[] \}\> \},
+): Promise\<Metadata\> \{
+  const params = await props.params;
+  const page = source.getPage(params.slug);
+  if (!page) notFound();
+
+  return \{
+    title: page.data.title,
+    description: page.data.description,
+  \};
+\}
+EOF
+
+# Create lib/layout.shared.tsx
+cat \> lib/layout.shared.tsx \<\< 'EOF'
+import type \{ BaseLayoutProps \} from 'fumadocs-ui/layouts/shared';
+
+export function baseOptions(): BaseLayoutProps \{
+  return \{
+    nav: \{
+      title: 'My App',
+    \},
+  \};
+\}
+EOF
+
+# Create components/mdx.tsx
+cat \> components/mdx.tsx \<\< 'EOF'
+import defaultMdxComponents from 'fumadocs-ui/mdx';
+import type \{ MDXComponents \} from 'mdx/types';
+
+export function getMDXComponents(components?: MDXComponents) \{
+  return \{
+    ...defaultMdxComponents,
+    ...components,
+  \} satisfies MDXComponents;
+\}
+
+export const useMDXComponents = getMDXComponents;
+
+declare global \{
+  type MDXProvidedComponents = ReturnType\<typeof getMDXComponents\>;
+\}
+EOF
+
+# Create content/docs/index.mdx
+cat \> content/docs/index.mdx \<\< 'EOF'
+---
+title: Hello World
+---
+
+## Introduction
+I love Anime.
+EOF
+
+echo "Directory structure created successfully!"
+echo "Run 'npx next dev' to start your development server."

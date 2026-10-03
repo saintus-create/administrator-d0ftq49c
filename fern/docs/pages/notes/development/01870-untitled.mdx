@@ -1,0 +1,73 @@
+---
+title: "{"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p432"
+created: "20251124T132955"
+modified: "20251124T170338"
+category: "development"
+source: "notes_export.csv"
+---
+
+\{
+  "mcpServers": \{\}
+\}
+\{
+  "mcpServers": \{
+    "next-devtools": \{
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    \}
+  \}
+\}
+\{
+  "mcpServers": \{
+    "supabase": \{
+      "url": "https://mcp.supabase.com/mcp?project_ref=xvlzyfcgcpwxdbjilbin"
+    \}
+  \}
+\}
+1\{
+2  "mcpServers": \{
+3    "supabase": \{
+4      "type": "http",
+5      "url": "https://mcp.supabase.com/mcp?project_ref=xvlzyfcgcpwxdbjilbin"
+6    \}
+7  \}
+8\}
+\{
+  "servers": \{
+    "shadcn": \{
+      "url": "https://www.shadcn.io/api/mcp"
+    \}
+  \}
+\}
+ 
+\{
+  "registries": \{
+    "@aceternity": "https://ui.aceternity.com/registry/\{name\}.json"
+  \}
+\}
+\{
+	"mcpServers": \{
+		"svelte": \{
+			"type": "http",
+			"url": "https://mcp.svelte.dev/mcp",
+			"tools": ["*"]
+		\}
+	\}
+\}
+\{
+  "mcpServers": \{
+    "nuxt-ui": \{
+      "type": "http",
+      "url": "https://ui.nuxt.com/mcp"
+    \}
+  \}
+\}
+chat = client.chat.create(
+    model="grok-4-fast",
+    tools=[
+        mcp(server_url="https://mcp.deepwiki.com/mcp", server_label="deepwiki"),
+        mcp(server_url="https://your-custom-tools.com/mcp", server_label="custom"),
+        mcp(server_url="https://api.example.com/tools", server_label="api-tools"),
+    ],
+)

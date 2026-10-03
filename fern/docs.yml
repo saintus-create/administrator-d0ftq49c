@@ -22,6 +22,9 @@ navigation:
     layout:
       - section: Get started
         contents:
+          - page: Notes archive
+            path: docs/pages/notes/index.mdx
+            icon: fa-duotone fa-notebook
           - page: Welcome
             path: docs/pages/welcome.mdx
             icon: fa-duotone fa-house

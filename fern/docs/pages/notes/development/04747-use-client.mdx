@@ -1,0 +1,59 @@
+---
+title: "\"use client\";"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p792"
+created: "20250814T160155"
+modified: "20250814T160157"
+category: "development"
+source: "notes_export.csv"
+---
+
+"use client";
+
+import type \{ Metadata \} from "next";
+import \{ Geist, Geist_Mono \} from "next/font/google";
+import \{ ThemeProvider \} from "next-themes";
+import "./globals.css";
+
+const geistSans = Geist(\{
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+\});
+
+const geistMono = Geist_Mono(\{
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+\});
+
+export const metadata: Metadata = \{
+  title: "Chatbot", // Changed from "AI Gateway Demo" to a generic title (or specify another)
+  description: "A demo of the Vercel AI Gateway with the AI SDK by Vercel",
+\};
+
+export default function RootLayout(\{
+  children,
+\}: Readonly\<\{
+  children: React.ReactNode;
+\}\>) \{
+  return (
+    \<html lang="en" suppressHydrationWarning\>
+      \<body
+        className=\{`$\{geistSans.variable\} $\{geistMono.variable\} antialiased relative overflow-hidden bg-background`\}
+      \>
+        \<div className="orbs-container"\>
+          \<div className="orb orb1"\>\</div\>
+          \<div className="orb orb2"\>\</div\>
+          \<div className="orb orb3"\>\</div\>
+        \</div\>
+        \<ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        \>
+          \{children\}
+        \</ThemeProvider\>
+        \<script src="/parallax.js" async\>\</script\>
+      \</body\>
+    \</html\>
+  );
+\}

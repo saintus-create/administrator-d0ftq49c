@@ -1,0 +1,70 @@
+---
+title: "{"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p417"
+created: "20251124T234959"
+modified: "20251124T235053"
+category: "development"
+source: "notes_export.csv"
+---
+
+\{
+  "mcpServers": \{
+    "next-devtools": \{
+      "command": "npx",
+      "args": [
+        "-y",
+        "next-devtools-mcp@latest"
+      ]
+    \},
+    "supabase": \{
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=xvlzyfcgcpwxdbjilbin"
+    \},
+    "svelte": \{
+      "type": "http",
+      "url": "https://mcp.svelte.dev/mcp",
+      "tools": [
+        "*"
+      ]
+    \},
+    "nuxt-ui": \{
+      "type": "http",
+      "url": "https://ui.nuxt.com/mcp"
+    \},
+    "deepwiki": \{
+      "type": "http",
+      "url": "https://mcp.deepwiki.com/mcp"
+    \},
+    "custom": \{
+      "type": "http",
+      "url": "https://your-custom-tools.com/mcp"
+    \},
+    "api-tools": \{
+      "type": "http",
+      "url": "https://api.example.com/tools"
+    \}
+  \},
+  "servers": \{
+    "shadcn": \{
+      "url": "https://www.shadcn.io/api/mcp"
+    \}
+  \},
+  "registries": \{
+    "@aceternity": "https://ui.aceternity.com/registry/\{name\}.json"
+  \}
+\}\{
+  "mcpServers": \{
+    "shadcn-ui-server": \{
+      "command": "npx",
+      "args": ["-y", "shadcn-ui-mcp-server"]
+    \}
+  \}
+\}
+\{
+  "mcpServers": \{
+    "shadcn-ui-server": \{
+      "command": "npx",
+      "args": ["@heilgar/shadcn-ui-mcp-server"]
+    \}
+  \}
+\}

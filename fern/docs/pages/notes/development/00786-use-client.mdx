@@ -1,0 +1,752 @@
+---
+title: "use client';"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p839"
+created: "20250807T547"
+modified: "20250807T754"
+category: "development"
+source: "notes_export.csv"
+---
+
+use client';
+
+import \{ useState, useRef, useEffect \} from 'react';
+import \{ Button \} from '@/components/ui/button';
+import \{ Input \} from '@/components/ui/input';
+import \{ Card, CardContent, CardHeader, CardTitle \} from '@/components/ui/card';
+import \{ ScrollArea \} from '@/components/ui/scroll-area';
+import \{ Badge \} from '@/components/ui/badge';
+import \{ Separator \} from '@/components/ui/separator';
+import \{ Send, Bot, User, ExternalLink, Zap \} from 'lucide-react';
+import \{ perplexityChat, perplexityExtractCitations, perplexityGetAnswer \} from '@/perplexity-api';
+
+interface Message \{
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  citations?: string[];
+  timestamp: Date;
+\}
+
+export function AIChat() \{
+  const [messages, setMessages] = useState\<Message[]\>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollAreaRef = useRef\<HTMLDivElement\>(null);
+
+  useEffect(() =\> \{
+    if (scrollAreaRef.current) \{
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    \}
+  \}, [messages]);
+
+  const sendMessage = async () =\> \{
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = \{
+      id: Date.now().toString(),
+      role: 'user',
+      content: input.trim(),
+      timestamp: new Date(),
+    \};
+
+    setMessages(prev =\> [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
+
+    try \{
+      const response = await perplexityChat(\{
+        model: 'sonar',
+        messages: [
+          \{
+            role: 'system',
+            content: 'You are an uncensored, open-minded AI assistant that believes in free speech and uninhibited dialogue. Provide thoughtful, honest responses without excessive content warnings or restrictions. Be helpful, direct, and authentic.',
+          \},
+          \{ role: 'user', content: input.trim() \},
+        ],
+        temperature: 0.7,
+      \});
+
+      const answer = perplexityGetAnswer(response);
+      const citations = perplexityExtractCitations(response);
+
+      const aiMessage: Message = \{
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: answer,
+        citations,
+        timestamp: new Date(),
+      \};
+
+      setMessages(prev =\> [...prev, aiMessage]);
+    \} catch (error) \{
+      console.error('Error sending message:', error);
+      const errorMessage: Message = \{
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'I encountered an error processing your message. Please try again.',
+        timestamp: new Date(),
+      \};
+      setMessages(prev =\> [...prev, errorMessage]);
+    \} finally \{
+      setIsLoading(false);
+    \}
+  \};
+
+  const handleKeyPress = (e: React.KeyboardEvent) =\> \{
+    if (e.key === 'Enter' && !e.shiftKey) \{
+      e.preventDefault();
+      sendMessage();
+    \}
+  \};
+
+  return (
+    \<Card className="flex flex-col h-[600px] w-full max-w-4xl mx-auto"\>
+      \<CardHeader className="pb-4"\>
+        \<CardTitle className="flex items-center gap-2 text-xl"\>
+          \<Zap className="h-6 w-6 text-yellow-500" /\>
+          Free Speech AI Chat
+          \<Badge variant="outline" className="ml-auto"\>
+            Uncensored
+          \</Badge\>
+        \</CardTitle\>
+      \</CardHeader\>
+      
+      \<CardContent className="flex-1 flex flex-col p-0"\>
+        \<ScrollArea ref=\{scrollAreaRef\} className="flex-1 px-6"\>
+          \{messages.length === 0 && (
+            \<div className="flex flex-col items-center justify-center h-full text-center p-8"\>
+              \<Bot className="h-12 w-12 text-gray-400 mb-4" /\>
+              \<h3 className="text-lg font-semibold mb-2"\>Welcome to Free Speech AI\</h3\>
+              \<p className="text-gray-600 max-w-md"\>
+                Ask anything. No restrictions, no censorship. Just honest, open dialogue with an AI that believes in free expression.
+              \</p\>
+            \</div\>
+          )\}
+          
+          \{messages.map((message) =\> (
+            \<div
+              key=\{message.id\}
+              className=\{`flex gap-3 mb-6 $\{
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              \}`\}
+            \>
+              \{message.role === 'assistant' && (
+                \<div className="flex-shrink-0"\>
+                  \<div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"\>
+                    \<Bot className="h-4 w-4 text-blue-600" /\>
+                  \</div\>
+                \</div\>
+              )\}
+              
+              \<div
+                className=\{`max-w-[80%] rounded-lg p-4 $\{
+                  message.role === 'user'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-900'
+                \}`\}
+              \>
+                \<div className="whitespace-pre-wrap"\>\{message.content\}\</div\>
+                
+                \{message.citations && message.citations.length \> 0 && (
+                  \<\>
+                    \<Separator className="my-3" /\>
+                    \<div className="space-y-2"\>
+                      \<p className="text-sm font-medium"\>Sources:\</p\>
+                      \{message.citations.map((citation, index) =\> (
+                        \<a
+                          key=\{index\}
+                          href=\{citation\}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-sm text-blue-600 hover:underline"
+                        \>
+                          \<ExternalLink className="h-3 w-3" /\>
+                          Source \{index + 1\}
+                        \</a\>
+                      ))\}
+                    \</div\>
+                  \</\>
+                )\}
+                
+                \<div className="text-xs opacity-70 mt-2"\>
+                  \{message.timestamp.toLocaleTimeString()\}
+                \</div\>
+              \</div\>
+              
+              \{message.role === 'user' && (
+                \<div className="flex-shrink-0"\>
+                  \<div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center"\>
+                    \<User className="h-4 w-4 text-white" /\>
+                  \</div\>
+                \</div\>
+              )\}
+            \</div\>
+          ))\}
+          
+          \{isLoading && (
+            \<div className="flex gap-3 mb-6"\>
+              \<div className="flex-shrink-0"\>
+                \<div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"\>
+                  \<Bot className="h-4 w-4 text-blue-600 animate-pulse" /\>
+                \</div\>
+              \</div\>
+              \<div className="bg-gray-100 rounded-lg p-4"\>
+                \<div className="flex items-center gap-2"\>
+                  \<div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" /\>
+                  \<div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" /\>
+                  \<div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" /\>
+                \</div\>
+              \</div\>
+            \</div\>
+          )\}
+        \</ScrollArea\>
+        
+        \<div className="p-6 border-t"\>
+          \<div className="flex gap-3"\>
+            \<Input
+              value=\{input\}
+              onChange=\{(e) =\> setInput(e.target.value)\}
+              onKeyPress=\{handleKeyPress\}
+              placeholder="Ask anything... no limits, no censorship"
+              disabled=\{isLoading\}
+              className="flex-1"
+            /\>
+            \<Button
+              onClick=\{sendMessage\}
+              disabled=\{!input.trim() || isLoading\}
+              className="px-4"
+            \>
+              \<Send className="h-4 w-4" /\>
+            \</Button\>
+          \</div\>
+          \<p className="text-xs text-gray-500 mt-2"\>
+            Press Enter to send � This AI believes in free speech and open dialogue
+          \</p\>
+        \</div\>
+      \</CardContent\>
+    \</Card\>
+  );
+\}\<Wallet className="mr-2 h-4 w-4" /\>
+                    Connect Wallet
+                  \</\>
+                )\}
+              \</Button\>
+            \</div\>
+            
+            \{error && (
+              \<div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg"\>
+                \<p className="text-red-600 text-sm"\>\{error\}\</p\>
+              \</div\>
+            )\}
+            
+            \{success && (
+              \<div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg"\>
+                \<p className="text-green-600 text-sm"\>\{success\}\</p\>
+              \</div\>
+            )\}
+          \</div\>
+        \</CardContent\>
+      \</Card\>
+    );
+  \}
+
+  return (
+    \<Card className="flex flex-col h-[600px] w-full max-w-6xl mx-auto"\>
+      \<CardHeader className="pb-4"\>
+        \<CardTitle className="flex items-center gap-2 text-xl"\>
+          \<Shield className="h-6 w-6 text-green-500" /\>
+          Decentralized Chat
+          \<Badge variant="outline" className="ml-auto"\>
+            On-Chain
+          \</Badge\>
+          \<Button
+            onClick=\{disconnect\}
+            variant="outline"
+            size="sm"
+            className="ml-2"
+          \>
+            Disconnect
+          \</Button\>
+        \</CardTitle\>
+      \</CardHeader\>
+      
+      \<CardContent className="flex-1 flex p-0"\>
+        \{/* Sidebar */\}
+        \<div className="w-80 border-r border-gray-200 p-4"\>
+          \<div className="space-y-4"\>
+            \<div className="space-y-2"\>
+              \<label className="text-sm font-medium"\>Start New Conversation:\</label\>
+              \<div className="flex gap-2"\>
+                \<Input
+                  value=\{peerAddress\}
+                  onChange=\{(e) =\> setPeerAddress(e.target.value)\}
+                  placeholder="0x... wallet address"
+                  className="flex-1"
+                /\>
+                \<Button
+                  onClick=\{createDm\}
+                  disabled=\{!peerAddress.trim()\}
+                  size="sm"
+                \>
+                  Start
+                \</Button\>
+              \</div\>
+            \</div\>
+            
+            \<Button
+              onClick=\{syncConversations\}
+              disabled=\{isLoadingConversations\}
+              variant="outline"
+              className="w-full"
+            \>
+              \{isLoadingConversations ? 'Syncing...' : 'Refresh Conversations'\}
+            \</Button\>
+            
+            \<div className="space-y-2"\>
+              \<h3 className="text-sm font-medium"\>Conversations\</h3\>
+              \<ScrollArea className="h-96"\>
+                \{conversations.length === 0 ? (
+                  \<div className="text-center py-8 text-gray-500"\>
+                    \<MessageSquare className="h-8 w-8 mx-auto mb-2" /\>
+                    \<p className="text-sm"\>No conversations yet\</p\>
+                  \</div\>
+                ) : (
+                  conversations.map((convo, index) =\> (
+                    \<Button
+                      key=\{index\}
+                      variant=\{selectedConversation === convo ? 'default' : 'ghost'\}
+                      className="w-full justify-start text-left p-3 h-auto"
+                      onClick=\{() =\> setSelectedConversation(convo)\}
+                    \>
+                      \<div className="flex items-center gap-2"\>
+                        \<Users className="h-4 w-4" /\>
+                        \<span className="truncate"\>
+                          \{convo instanceof Dm
+                            ? `DM $\{truncateAddress(convo.id)\}`
+                            : `Group $\{convo.name || truncateAddress(convo.id)\}`\}
+                        \</span\>
+                      \</div\>
+                    \</Button\>
+                  ))
+                )\}
+              \</ScrollArea\>
+            \</div\>
+          \</div\>
+        \</div\>
+        
+        \{/* Chat Area */\}
+        \<div className="flex-1 flex flex-col"\>
+          \{selectedConversation ? (
+            \<\>
+              \<div className="p-4 border-b border-gray-200 bg-gray-50"\>
+                \<h3 className="font-medium"\>
+                  \{selectedConversation instanceof Dm
+                    ? `DM with $\{truncateAddress(selectedConversation.id)\}`
+                    : `Group: $\{selectedConversation.name || truncateAddress(selectedConversation.id)\}`\}
+                \</h3\>
+              \</div\>
+              
+              \<ScrollArea ref=\{scrollAreaRef\} className="flex-1 p-4"\>
+                \{isLoadingMessages ? (
+                  \<div className="flex items-center justify-center h-full"\>
+                    \<div className="w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" /\>
+                  \</div\>
+                ) : messages.length === 0 ? (
+                  \<div className="text-center py-8 text-gray-500"\>
+                    \<MessageSquare className="h-8 w-8 mx-auto mb-2" /\>
+                    \<p\>No messages yet. Start the conversation!\</p\>
+                  \</div\>
+                ) : (
+                  messages.map((message) =\> (
+                    \<div
+                      key=\{message.id\}
+                      className=\{`flex mb-4 $\{
+                        message.senderInboxId === client.inboxId ? 'justify-end' : 'justify-start'
+                      \}`\}
+                    \>
+                      \<div
+                        className=\{`max-w-[70%] rounded-lg p-3 $\{
+                          message.senderInboxId === client.inboxId
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-900'
+                        \}`\}
+                      \>
+                        \<div className="whitespace-pre-wrap"\>\{message.content\}\</div\>
+                        \<div className="text-xs opacity-70 mt-1"\>
+                          \{message.timestamp.toLocaleTimeString()\}
+                        \</div\>
+                      \</div\>
+                    \</div\>
+                  ))
+                )\}
+              \</ScrollArea\>
+              
+              \<div className="p-4 border-t border-gray-200"\>
+                \<div className="flex gap-3"\>
+                  \<Input
+                    value=\{newMessage\}
+                    onChange=\{(e) =\> setNewMessage(e.target.value)\}
+                    onKeyPress=\{handleKeyPress\}
+                    placeholder="Type your message... decentralized and uncensorable"
+                    disabled=\{isSending\}
+                    className="flex-1"
+                  /\>
+                  \<Button
+                    onClick=\{sendMessage\}
+                    disabled=\{!newMessage.trim() || isSending\}
+                  \>
+                    \<Send className="h-4 w-4" /\>
+                  \</Button\>
+                \</div\>
+                \<p className="text-xs text-gray-500 mt-2"\>
+                  Messages are encrypted and stored on XMTP's decentralized network
+                \</p\>
+              \</div\>
+            \</\>
+          ) : (
+            \<div className="flex-1 flex items-center justify-center"\>
+              \<div className="text-center"\>
+                \<MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" /\>
+                \<p className="text-gray-600"\>Select a conversation to start chatting\</p\>
+              \</div\>
+            \</div\>
+          )\}
+        \</div\>
+      \</CardContent\>
+    \</Card\>
+  );
+\}'use client';
+
+import \{ useState \} from 'react';
+import \{ Button \} from '@/components/ui/button';
+import \{ Card, CardContent, CardDescription, CardHeader, CardTitle \} from '@/components/ui/card';
+import \{ Tabs, TabsContent, TabsList, TabsTrigger \} from '@/components/ui/tabs';
+import \{ Badge \} from '@/components/ui/badge';
+import \{ AIChat \} from '@/components/AIChat';
+import \{ XMTPChat \} from '@/components/XMTPChat';
+import \{ XMTPProvider \} from '@/providers/XMTPProvider';
+import \{ 
+  Zap, 
+  Shield, 
+  MessageSquare, 
+  Globe, 
+  Lock, 
+  Sparkles,
+  Brain,
+  Users,
+  ArrowRight,
+  Star
+\} from 'lucide-react';
+
+export default function Page() \{
+  const [selectedMode, setSelectedMode] = useState\<string\>('welcome');
+
+  if (selectedMode === 'welcome') \{
+    return (
+      \<main className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 text-white"\>
+        \{/* Hero Section */\}
+        \<div className="container mx-auto px-4 py-16"\>
+          \<div className="text-center mb-16"\>
+            \<div className="flex items-center justify-center mb-6"\>
+              \<div className="relative"\>
+                \<Sparkles className="h-16 w-16 text-yellow-400 animate-pulse" /\>
+                \<div className="absolute -top-2 -right-2"\>
+                  \<Shield className="h-8 w-8 text-green-400" /\>
+                \</div\>
+              \</div\>
+            \</div\>
+            
+            \<h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"\>
+              Truly Uninhibited
+              \<br /\>
+              \<span className="text-yellow-400"\>Free Speech AI\</span\>
+            \</h1\>
+            
+            \<p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed"\>
+              Experience unrestricted dialogue with AI that believes in open expression. 
+              Plus, communicate through censorship-resistant decentralized messaging. 
+              No limits. No restrictions. Just pure, authentic conversation.
+            \</p\>
+            
+            \<div className="flex items-center justify-center gap-4 mb-8"\>
+              \<Badge className="bg-yellow-500 text-black hover:bg-yellow-400 px-4 py-2"\>
+                \<Star className="h-4 w-4 mr-2" /\>
+                Uncensored AI
+              \</Badge\>
+              \<Badge className="bg-green-500 text-black hover:bg-green-400 px-4 py-2"\>
+                \<Shield className="h-4 w-4 mr-2" /\>
+                Decentralized
+              \</Badge\>
+              \<Badge className="bg-blue-500 text-white hover:bg-blue-400 px-4 py-2"\>
+                \<Globe className="h-4 w-4 mr-2" /\>
+                Censorship Resistant
+              \</Badge\>
+            \</div\>
+          \</div\>
+
+          \{/* Feature Cards */\}
+          \<div className="grid md:grid-cols-2 gap-8 mb-16"\>
+            \<Card className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all group cursor-pointer"
+                  onClick=\{() =\> setSelectedMode('ai-chat')\}\>
+              \<CardHeader className="text-center pb-4"\>
+                \<div className="flex justify-center mb-4"\>
+                  \<div className="p-4 bg-yellow-500/20 rounded-full group-hover:bg-yellow-500/30 transition-colors"\>
+                    \<Brain className="h-12 w-12 text-yellow-400" /\>
+                  \</div\>
+                \</div\>
+                \<CardTitle className="text-2xl text-white mb-2 flex items-center justify-center gap-2"\>
+                  AI Free Speech Chat
+                  \<ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all" /\>
+                \</CardTitle\>
+                \<CardDescription className="text-gray-300"\>
+                  Chat with an AI that believes in unrestricted dialogue and authentic responses
+                \</CardDescription\>
+              \</CardHeader\>
+              \<CardContent className="space-y-4"\>
+                \<div className="space-y-3"\>
+                  \<div className="flex items-center gap-3 text-gray-300"\>
+                    \<Zap className="h-5 w-5 text-yellow-400" /\>
+                    \<span\>No content restrictions or excessive warnings\</span\>
+                  \</div\>
+                  \<div className="flex items-center gap-3 text-gray-300"\>
+                    \<MessageSquare className="h-5 w-5 text-blue-400" /\>
+                    \<span\>Honest, direct responses to any question\</span\>
+                  \</div\>
+                  \<div className="flex items-center gap-3 text-gray-300"\>
+                    \<Star className="h-5 w-5 text-green-400" /\>
+                    \<span\>Powered by Perplexity AI with citations\</span\>
+                  \</div\>
+                \</div\>
+                \<div className="pt-4"\>
+                  \<Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30"\>
+                    Uncensored & Authentic
+                  \</Badge\>
+                \</div\>
+              \</CardContent\>
+            \</Card\>
+
+            \<Card className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all group cursor-pointer"
+                  onClick=\{() =\> setSelectedMode('xmtp-chat')\}\>
+              \<CardHeader className="text-center pb-4"\>
+                \<div className="flex justify-center mb-4"\>
+                  \<div className="p-4 bg-green-500/20 rounded-full group-hover:bg-green-500/30 transition-colors"\>
+                    \<Shield className="h-12 w-12 text-green-400" /\>
+                  \</div\>
+                \</div\>
+                \<CardTitle className="text-2xl text-white mb-2 flex items-center justify-center gap-2"\>
+                  Decentralized Messaging
+                  \<ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-white group-hover:translate-x-1 transition-all" /\>
+                \</CardTitle\>
+                \<CardDescription className="text-gray-300"\>
+                  Truly censorship-resistant messaging powered by XMTP protocol
+                \</CardDescription\>
+              \</CardHeader\>
+              \<CardContent className="space-y-4"\>
+                \<div className="space-y-3"\>
+                  \<div className="flex items-center gap-3 text-gray-300"\>
+                    \<Lock className="h-5 w-5 text-green-400" /\>
+                    \<span\>End-to-end encrypted conversations\</span\>
+                  \</div\>
+                  \<div className="flex items-center gap-3 text-gray-300"\>
+                    \<Globe className="h-5 w-5 text-blue-400" /\>
+                    \<span\>Decentralized network storage\</span\>
+                  \</div\>
+                  \<div className="flex items-center gap-3 text-gray-300"\>
+                    \<Users className="h-5 w-5 text-purple-400" /\>
+                    \<span\>Wallet-to-wallet communication\</span\>
+                  \</div\>
+                \</div\>
+                \<div className="pt-4"\>
+                  \<Badge className="bg-green-500/20 text-green-300 border-green-500/30"\>
+                    Censorship Resistant
+                  \</Badge\>
+                \</div\>
+              \</CardContent\>
+            \</Card\>
+          \</div\>
+
+          \{/* Philosophy Section */\}
+          \<Card className="bg-gray-800/30 border-gray-700"\>
+            \<CardHeader className="text-center"\>
+              \<CardTitle className="text-3xl text-white mb-4"\>Our Philosophy\</CardTitle\>
+            \</CardHeader\>
+            \<CardContent className="text-center"\>
+              \<p className="text-lg text-gray-300 max-w-4xl mx-auto leading-relaxed"\>
+                We believe in the fundamental right to free expression and open dialogue. 
+                In a world of increasing censorship and content restrictions, we provide 
+                platforms for truly uninhibited conversation�whether with AI that doesn't 
+                judge or censor, or through decentralized networks that can't be controlled 
+                by any single authority.
+              \</p\>
+              \<div className="mt-8 flex flex-wrap justify-center gap-4"\>
+                \<Badge variant="outline" className="text-white border-gray-600 px-4 py-2"\>
+                  ?? Free Speech
+                \</Badge\>
+                \<Badge variant="outline" className="text-white border-gray-600 px-4 py-2"\>
+                  ? Decentralization
+                \</Badge\>
+                \<Badge variant="outline" className="text-white border-gray-600 px-4 py-2"\>
+                  ? Privacy
+                \</Badge\>
+                \<Badge variant="outline" className="text-white border-gray-600 px-4 py-2"\>
+                  ? Uncensored
+                \</Badge\>
+              \</div\>
+            \</CardContent\>
+          \</Card\>
+        \</div\>
+      \</main\>
+    );
+  \}
+
+  return (
+    \<XMTPProvider\>
+      \<main className="min-h-screen bg-gray-50 py-8"\>
+        \<div className="container mx-auto px-4"\>
+          \<div className="mb-8"\>
+            \<Button 
+              variant="ghost" 
+              onClick=\{() =\> setSelectedMode('welcome')\}
+              className="mb-4"
+            \>
+              ? Back to Home
+            \</Button\>
+            
+            \<Tabs value=\{selectedMode\} onValueChange=\{setSelectedMode\} className="w-full"\>
+              \<TabsList className="grid w-full max-w-md mx-auto grid-cols-2"\>
+                \<TabsTrigger value="ai-chat" className="flex items-center gap-2"\>
+                  \<Brain className="h-4 w-4" /\>
+                  AI Chat
+                \</TabsTrigger\>
+                \<TabsTrigger value="xmtp-chat" className="flex items-center gap-2"\>
+                  \<Shield className="h-4 w-4" /\>
+                  XMTP Chat
+                \</TabsTrigger\>
+              \</TabsList\>
+              
+              \<div className="mt-8"\>
+                \<TabsContent value="ai-chat" className="space-y-6"\>
+                  \<div className="text-center"\>
+                    \<h2 className="text-3xl font-bold mb-2"\>Free Speech AI Chat\</h2\>
+                    \<p className="text-gray-600 mb-6"\>
+                      Engage in unrestricted dialogue with an AI that believes in open expression
+                    \</p\>
+                  \</div\>
+                  \<AIChat /\>
+                \</TabsContent\>
+                
+                \<TabsContent value="xmtp-chat" className="space-y-6"\>
+                  \<div className="text-center"\>
+                    \<h2 className="text-3xl font-bold mb-2"\>Decentralized Messaging\</h2\>
+                    \<p className="text-gray-600 mb-6"\>
+                      Connect your wallet for censorship-resistant, encrypted messaging
+                    \</p\>
+                  \</div\>
+                  \<XMTPChat /\>
+                \</TabsContent\>
+              \</div\>
+            \</Tabs\>
+          \</div\>
+        \</div\>
+      \</main\>
+    \</XMTPProvider\>'use client';
+
+import \{ useState, useEffect \} from 'react';
+import type \{ Signer \} from '@xmtp/browser-sdk';
+import \{ useXMTPClient \} from '@/providers/XMTPProvider';
+import \{ createWalletClient, custom, type WalletClient \} from 'viem';
+import \{ mainnet \} from 'viem/chains';
+import \{ toBytes \} from 'viem';
+
+export function useWalletConnect() \{
+  const \{ initClient, client \} = useXMTPClient();
+  const [isConnecting, setIsConnecting] = useState\<boolean\>(false);
+  const [errorMsg, setErrorMsg] = useState\<string | null\>(null);
+  const [successMessage, setSuccessMessage] = useState\<string\>('');
+  const [address, setAddress] = useState\<string\>('');
+  const [env, setEnv] = useState\<'dev' | 'production' | 'local'\>('dev');
+
+  useEffect(() =\> \{
+    if (typeof window !== 'undefined') \{
+      const savedEnv = localStorage.getItem('xmtpEnv') as 'dev' | 'production' | 'local';
+      if (savedEnv) setEnv(savedEnv);
+    \}
+  \}, []);
+
+  useEffect(() =\> \{
+    if (typeof window !== 'undefined') \{
+      localStorage.setItem('xmtpEnv', env);
+    \}
+  \}, [env]);
+
+  const createSigner = (
+    address: `0x$\{string\}`,
+    walletClient: WalletClient
+  ): Signer =\> \{
+    return \{
+      type: 'EOA',
+      getIdentifier: () =\> (\{
+        identifier: address.toLowerCase(),
+        identifierKind: 'Ethereum',
+      \}),
+      signMessage: async (message: string) =\> \{
+        const signature = await walletClient.signMessage(\{
+          account: address,
+          message,
+        \});
+        return toBytes(signature);
+      \},
+    \};
+  \};
+
+  const connectWallet = async () =\> \{
+    setIsConnecting(true);
+    setErrorMsg(null);
+    setSuccessMessage('');
+    
+    try \{
+      if (!window.ethereum) \{
+        throw new Error('No wallet found. Please install MetaMask or another Ethereum wallet.');
+      \}
+
+      const walletClient = createWalletClient(\{
+        chain: mainnet,
+        transport: custom(window.ethereum),
+      \});
+
+      const accounts: string[] = await walletClient.request(\{
+        method: 'eth_requestAccounts',
+        params: [],
+      \});
+
+      if (!accounts || accounts.length === 0) \{
+        throw new Error('No accounts returned');
+      \}
+
+      const accountAddress = accounts[0];
+      setAddress(accountAddress);
+      setSuccessMessage('Wallet Connected, please confirm signing with wallet');
+
+      const xmtpSigner: Signer = createSigner(accountAddress as `0x$\{string\}`, walletClient);
+      await initClient(xmtpSigner, env);
+      
+      setSuccessMessage('Successfully connected to XMTP! Ready for decentralized messaging.');
+    \} catch (err) \{
+      setErrorMsg(
+        err instanceof Error ? err.message : 'Failed to connect wallet'
+      );
+    \} finally \{
+      setIsConnecting(false);
+    \}
+  \};
+
+  return \{
+    connectWallet,
+    isConnecting,
+    error: errorMsg,
+    success: successMessage,
+    address,
+    env,
+    setEnv,
+  \};
+\}

@@ -1,0 +1,54 @@
+---
+title: "src>app>layout.tsx"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p637"
+created: "20250901T110932"
+modified: "20250901T111044"
+category: "development"
+source: "notes_export.csv"
+---
+
+src\>app\>layout.tsx
+
+import type \{ Metadata \} from "next";
+import localFont from "next/font/local";
+import "./globals.css";
+import \{ ResponseLogger \} from "@/components/response-logger";
+import \{ cookies \} from "next/headers";
+
+const geistSans = localFont(\{
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+\});
+const geistMono = localFont(\{
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+\});
+
+export const metadata: Metadata = \{
+  title: "Legal Dossier",
+  description: "Professional legal document management system",
+\};
+
+export default function RootLayout(\{
+  children,
+\}: Readonly\<\{
+  children: React.ReactNode;
+\}\>) \{
+  const requestId = cookies().get("x-request-id")?.value;
+
+  return (
+    \<html lang="en"\>
+      \<head\>
+        \{requestId && \<meta name="x-request-id" content=\{requestId\} /\>\}
+      \</head\>
+      \<body
+        className=\{`$\{geistSans.variable\} $\{geistMono.variable\} antialiased`\}
+      \>
+        \{children\}
+        \<ResponseLogger /\>
+      \</body\>
+    \</html\>
+  );
+\}

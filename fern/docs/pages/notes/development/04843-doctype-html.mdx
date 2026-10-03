@@ -1,0 +1,36 @@
+---
+title: "<!DOCTYPE html>"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p1524"
+created: "20250630T223706"
+modified: "20250630T223708"
+category: "development"
+source: "notes_export.csv"
+---
+
+\<!DOCTYPE html\>
+\<html lang="en"\>
+\<head\>
+  \<meta charset="UTF-8"\>
+  \<title\>Slot Machine Simulation\</title\>
+  \<style\>
+    body \{ font-family: sans-serif; text-align: center; background: #222; color: white; \}
+    .slot \{ font-size: 4em; margin: 20px; \}
+    button \{ padding: 10px 20px; font-size: 1.5em; \}
+  \</style\>
+\</head\>
+\<body\>
+  \<h1\>? Casino Slot Simulation\</h1\>
+  \<div class="slot" id="slots"\>? ? ?\</div\>
+  \<button onclick="spin()"\>SPIN\</button\>
+
+  \<script\>
+    const symbols = ["?", "?", "?", "?", "?", "7??"];
+    function spin() \{
+      const slot1 = symbols[Math.floor(Math.random() * symbols.length)];
+      const slot2 = symbols[Math.floor(Math.random() * symbols.length)];
+      const slot3 = symbols[Math.floor(Math.random() * symbols.length)];
+      document.getElementById("slots").textContent = `$\{slot1\} $\{slot2\} $\{slot3\}`;
+    \}
+  \</script\>
+\</body\>
+\</html\>

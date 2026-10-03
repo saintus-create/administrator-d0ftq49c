@@ -1,0 +1,49 @@
+---
+title: "import { Button } from \"@/components/ui/button\";"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p2501"
+created: "20260220T73434"
+modified: "20260220T73434"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+import \{ Button \} from "@/components/ui/button";
+import \{ Home, Search, User \} from "lucide-react";
+
+const navigationItems = [
+  \{
+    icon: Home,
+    label: "Home",
+  \},
+  \{
+    icon: Search,
+    label: "Search",
+  \},
+  \{
+    icon: User,
+    label: "Profile",
+  \},
+];
+
+const Frame = (): JSX.Element =\> \{
+  return (
+    \<nav className="flex w-[379.43px] h-[111.61px] items-center justify-between px-[42px] py-7 relative rounded-[200px] bg-[#231343]"\>
+      \{navigationItems.map((item, index) =\> (
+        \<Button
+          key=\{index\}
+          variant="ghost"
+          size="icon"
+          className="relative flex items-center justify-center w-fit h-auto mt-[-2.68px] p-0 hover:bg-transparent"
+          aria-label=\{item.label\}
+        \>
+          \<item.icon
+            className="w-[42.6px] h-[42.6px] text-white"
+            strokeWidth=\{1.5\}
+          /\>
+        \</Button\>
+      ))\}
+    \</nav\>
+  );
+\};
+
+export default Frame;

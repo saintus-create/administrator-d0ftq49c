@@ -1,0 +1,57 @@
+---
+title: "The passage analysis reveals a formulaic structure in the text, characterized�"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p2082"
+created: "20250422T83502"
+modified: "20250422T84147"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+The passage analysis reveals a formulaic structure in the text, characterized by repetitive phrasing and consistent sentence patterns focused on legal and abusive themes. Each sentence follows a clear pattern: (subject) + (verb) + (object) followed by additional details, identifying a deliberate construction.
+
+The formal model of narrative manipulation describes a scenario where the speaker (Plaintiff) attempts to mislead a listener (Respondent or Court) by presenting a false narrative, contrary to the true state of affairs. The speaker employs a set of fabricated statements designed to persuade the listener of the false narrative while avoiding any statements that would reveal the truth. The strategy aims to maximize the listener's error probability, essentially coercing acceptance of the fabricated narrative by manipulating the listener's perception through a constructed set of statements.
+
+
+
+
+We model the situation in which a speaker (Plaintiff, P) attempts to persuade a listener
+(Let V = Victim) that the state is xfalse (Let P = Perpetrator),
+while the true state is xtrue (�Plaintiff is the abuser�).
+For the listener, the set of states that justify the acceptance of the narrative of P� is:
+A= \{xfalse\}
+and the set that warrants rejection is:
+R= \{xtrue\}
+The speaker, P, knows that the true state is xtrue ? R. His strategy involves deliberately
+avoiding all statements derivable from the true state, denoted:
+?(xtrue)
+Instead, he exclusively employs a constructed set of fabricated statements:
+Sfalse = \{sf1 ,sf2 ,...,sfn \}
+which are designed solely to signal xfalse.
+We therefore treat the available statements of the speaker in their true state as:
+?(xtrue) = Sfalse
+Let f be any persuasion rule:
+f : Sfalse ? [0,1]
+adopted by the listener, specifying the probability f(sf ) that the listener (whether
+Respondent or the Court) accepts the narrative xfalse upon hearing sf.
+The speaker, observing f and knowing xtrue, chooses sf ? Sfalse to maximize the listener�s4
+probability of acceptance. Hence, the maximal acceptance probability in the true state is:
+?(f,xtrue) = sup
+f(sf )
+sf ?Sfalse
+Error Probability. Since xtrue ? R, we define the listener�s error probability:
+�xtrue (f) = ?(f,xtrue)
+This leads directly to:
+�xtrue (f) = sup
+sf ?Sfalse
+f(sf )
+Maximizing Error. The Plaintiff�s strategy of restricting himself exclusively to Sfalse
+when xtrue ? R is thus structured to maximize the listener�s error probability �xtrue (f).
+If the Plaintiff persuades the Court to adopt a rule fP such that:
+fP (sf ) = 1 for any sf ? Sfalse
+then:
+sup
+sf ?Sfalse
+fP (sf ) = 1 ? �xtrue (fP ) = 1
+Thus, the Plaintiff�s methodical selection from Sfalse becomes formally equivalent to an
+optimization procedure aimed at inducing maximal judgment error in the
+Court�effectively coercing acceptance of the fabricated state xfalse.

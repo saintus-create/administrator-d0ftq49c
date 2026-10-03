@@ -1,0 +1,647 @@
+---
+title: "module.exports = {"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p67"
+created: "20260207T41801"
+modified: "20260207T42634"
+category: "development"
+source: "notes_export.csv"
+---
+
+module.exports = \{
+  content: [
+    "./src/**/*.\{html,js,ts,jsx,tsx\}",
+    "app/**/*.\{ts,tsx\}",
+    "components/**/*.\{ts,tsx\}",
+  ],
+  theme: \{
+    extend: \{
+      colors: \{
+        "vercelcombiloba-flower": "var(--vercelcombiloba-flower)",
+        "vercelcomdodger-blue": "var(--vercelcomdodger-blue)",
+        "vercelcompurple-heart": "var(--vercelcompurple-heart)",
+        "vercelcomscience-blue": "var(--vercelcomscience-blue)",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: \{
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        \},
+        secondary: \{
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        \},
+        destructive: \{
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        \},
+        muted: \{
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        \},
+        accent: \{
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        \},
+        popover: \{
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        \},
+        card: \{
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        \},
+      \},
+      fontFamily: \{
+        "chatgpt-com-inter-medium":
+          "var(--chatgpt-com-inter-medium-font-family)",
+        "chatgpt-com-inter-regular":
+          "var(--chatgpt-com-inter-regular-font-family)",
+        "chatgpt-com-inter-semi-bold":
+          "var(--chatgpt-com-inter-semi-bold-font-family)",
+        "chatgpt-com-semantic-button":
+          "var(--chatgpt-com-semantic-button-font-family)",
+        "chatgpt-com-semantic-heading-1":
+          "var(--chatgpt-com-semantic-heading-1-font-family)",
+        "chatgpt-com-semantic-heading-2":
+          "var(--chatgpt-com-semantic-heading-2-font-family)",
+        "chatgpt-com-semantic-heading-3":
+          "var(--chatgpt-com-semantic-heading-3-font-family)",
+        "chatgpt-com-semantic-link":
+          "var(--chatgpt-com-semantic-link-font-family)",
+        "chatgpt-com-semantic-link-underline":
+          "var(--chatgpt-com-semantic-link-underline-font-family)",
+        "developer-apple-com-inter-regular":
+          "var(--developer-apple-com-inter-regular-font-family)",
+        "developer-apple-com-inter-semi-bold":
+          "var(--developer-apple-com-inter-semi-bold-font-family)",
+        "developer-apple-com-semantic-button":
+          "var(--developer-apple-com-semantic-button-font-family)",
+        "developer-apple-com-semantic-heading-1":
+          "var(--developer-apple-com-semantic-heading-1-font-family)",
+        "developer-apple-com-semantic-heading-2":
+          "var(--developer-apple-com-semantic-heading-2-font-family)",
+        "developer-apple-com-semantic-heading-3":
+          "var(--developer-apple-com-semantic-heading-3-font-family)",
+        "developer-apple-com-semantic-item":
+          "var(--developer-apple-com-semantic-item-font-family)",
+        "developer-apple-com-semantic-label":
+          "var(--developer-apple-com-semantic-label-font-family)",
+        "developer-apple-com-semantic-link":
+          "var(--developer-apple-com-semantic-link-font-family)",
+        "vercel-com-geist-medium": "var(--vercel-com-geist-medium-font-family)",
+        "vercel-com-geist-semibold":
+          "var(--vercel-com-geist-semibold-font-family)",
+        "vercel-com-semantic-button":
+          "var(--vercel-com-semantic-button-font-family)",
+        "vercel-com-semantic-heading-1":
+          "var(--vercel-com-semantic-heading-1-font-family)",
+        "vercel-com-semantic-heading-2":
+          "var(--vercel-com-semantic-heading-2-font-family)",
+        "vercel-com-semantic-heading-5":
+          "var(--vercel-com-semantic-heading-5-font-family)",
+        "vercel-com-semantic-input":
+          "var(--vercel-com-semantic-input-font-family)",
+        "vercel-com-semantic-link":
+          "var(--vercel-com-semantic-link-font-family)",
+        "vercel-com-semantic-time":
+          "var(--vercel-com-semantic-time-font-family)",
+        sans: [
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"',
+          '"Noto Color Emoji"',
+        ],
+      \},
+      borderRadius: \{
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      \},
+      keyframes: \{
+        "accordion-down": \{
+          from: \{ height: "0" \},
+          to: \{ height: "var(--radix-accordion-content-height)" \},
+        \},
+        "accordion-up": \{
+          from: \{ height: "var(--radix-accordion-content-height)" \},
+          to: \{ height: "0" \},
+        \},
+      \},
+      animation: \{
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      \},
+    \},
+    container: \{ center: true, padding: "2rem", screens: \{ "2xl": "1400px" \} \},
+  \},
+  plugins: [],
+  darkMode: ["class"],
+\};module.exports = \{
+  content: [
+    "./src/**/*.\{html,js,ts,jsx,tsx\}",
+    "app/**/*.\{ts,tsx\}",
+    "components/**/*.\{ts,tsx\}",
+  ],
+  theme: \{
+    extend: \{
+      colors: \{
+        "vercelcombiloba-flower": "var(--vercelcombiloba-flower)",
+        "vercelcomdodger-blue": "var(--vercelcomdodger-blue)",
+        "vercelcompurple-heart": "var(--vercelcompurple-heart)",
+        "vercelcomscience-blue": "var(--vercelcomscience-blue)",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: \{
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        \},
+        secondary: \{
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        \},
+        destructive: \{
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        \},
+        muted: \{
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        \},
+        accent: \{
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        \},
+        popover: \{
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        \},
+        card: \{
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        \},
+      \},
+      fontFamily: \{
+        "chatgpt-com-inter-medium":
+          "var(--chatgpt-com-inter-medium-font-family)",
+        "chatgpt-com-inter-regular":
+          "var(--chatgpt-com-inter-regular-font-family)",
+        "chatgpt-com-inter-semi-bold":
+          "var(--chatgpt-com-inter-semi-bold-font-family)",
+        "chatgpt-com-semantic-button":
+          "var(--chatgpt-com-semantic-button-font-family)",
+        "chatgpt-com-semantic-heading-1":
+          "var(--chatgpt-com-semantic-heading-1-font-family)",
+        "chatgpt-com-semantic-heading-2":
+          "var(--chatgpt-com-semantic-heading-2-font-family)",
+        "chatgpt-com-semantic-heading-3":
+          "var(--chatgpt-com-semantic-heading-3-font-family)",
+        "chatgpt-com-semantic-link":
+          "var(--chatgpt-com-semantic-link-font-family)",
+        "chatgpt-com-semantic-link-underline":
+          "var(--chatgpt-com-semantic-link-underline-font-family)",
+        "developer-apple-com-inter-regular":
+          "var(--developer-apple-com-inter-regular-font-family)",
+        "developer-apple-com-inter-semi-bold":
+          "var(--developer-apple-com-inter-semi-bold-font-family)",
+        "developer-apple-com-semantic-button":
+          "var(--developer-apple-com-semantic-button-font-family)",
+        "developer-apple-com-semantic-heading-1":
+          "var(--developer-apple-com-semantic-heading-1-font-family)",
+        "developer-apple-com-semantic-heading-2":
+          "var(--developer-apple-com-semantic-heading-2-font-family)",
+        "developer-apple-com-semantic-heading-3":
+          "var(--developer-apple-com-semantic-heading-3-font-family)",
+        "developer-apple-com-semantic-item":
+          "var(--developer-apple-com-semantic-item-font-family)",
+        "developer-apple-com-semantic-label":
+          "var(--developer-apple-com-semantic-label-font-family)",
+        "developer-apple-com-semantic-link":
+          "var(--developer-apple-com-semantic-link-font-family)",
+        "vercel-com-geist-medium": "var(--vercel-com-geist-medium-font-family)",
+        "vercel-com-geist-semibold":
+          "var(--vercel-com-geist-semibold-font-family)",
+        "vercel-com-semantic-button":
+          "var(--vercel-com-semantic-button-font-family)",
+        "vercel-com-semantic-heading-1":
+          "var(--vercel-com-semantic-heading-1-font-family)",
+        "vercel-com-semantic-heading-2":
+          "var(--vercel-com-semantic-heading-2-font-family)",
+        "vercel-com-semantic-heading-5":
+          "var(--vercel-com-semantic-heading-5-font-family)",
+        "vercel-com-semantic-input":
+          "var(--vercel-com-semantic-input-font-family)",
+        "vercel-com-semantic-link":
+          "var(--vercel-com-semantic-link-font-family)",
+        "vercel-com-semantic-time":
+          "var(--vercel-com-semantic-time-font-family)",
+        sans: [
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"',
+          '"Noto Color Emoji"',
+        ],
+      \},
+      borderRadius: \{
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      \},
+      keyframes: \{
+        "accordion-down": \{
+          from: \{ height: "0" \},
+          to: \{ height: "var(--radix-accordion-content-height)" \},
+        \},
+        "accordion-up": \{
+          from: \{ height: "var(--radix-accordion-content-height)" \},
+          to: \{ height: "0" \},
+        \},
+      \},
+      animation: \{
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      \},
+    \},
+    container: \{ center: true, padding: "2rem", screens: \{ "2xl": "1400px" \} \},
+  \},
+  plugins: [],
+  darkMode: ["class"],
+\};
+@tailwind components;
+@tailwind utilities;
+
+@layer components \{
+  .all-\[unset\] \{
+    all: unset;
+  \}
+\}
+
+:root \{
+  --chatgpt-com-inter-medium-font-family: "Inter", Helvetica;
+  --chatgpt-com-inter-medium-font-size: 13.699999809265137px;
+  --chatgpt-com-inter-medium-font-style: normal;
+  --chatgpt-com-inter-medium-font-weight: 500;
+  --chatgpt-com-inter-medium-letter-spacing: -0.14000000059604645px;
+  --chatgpt-com-inter-medium-line-height: 22.959999084472656px;
+  --chatgpt-com-inter-regular-font-family: "Inter", Helvetica;
+  --chatgpt-com-inter-regular-font-size: 13.300000190734863px;
+  --chatgpt-com-inter-regular-font-style: normal;
+  --chatgpt-com-inter-regular-font-weight: 400;
+  --chatgpt-com-inter-regular-letter-spacing: -0.14000000059604645px;
+  --chatgpt-com-inter-regular-line-height: 22.959999084472656px;
+  --chatgpt-com-inter-semi-bold-font-family: "Inter", Helvetica;
+  --chatgpt-com-inter-semi-bold-font-size: 28.700000762939453px;
+  --chatgpt-com-inter-semi-bold-font-style: normal;
+  --chatgpt-com-inter-semi-bold-font-weight: 600;
+  --chatgpt-com-inter-semi-bold-letter-spacing: -0.30000001192092896px;
+  --chatgpt-com-inter-semi-bold-line-height: 39.599998474121094px;
+  --chatgpt-com-semantic-button-font-family: "Inter", Helvetica;
+  --chatgpt-com-semantic-button-font-size: 23.5px;
+  --chatgpt-com-semantic-button-font-style: normal;
+  --chatgpt-com-semantic-button-font-weight: 500;
+  --chatgpt-com-semantic-button-letter-spacing: -0.2409999966621399px;
+  --chatgpt-com-semantic-button-line-height: 31.790000915527344px;
+  --chatgpt-com-semantic-heading-1-font-family: "Inter", Helvetica;
+  --chatgpt-com-semantic-heading-1-font-size: 61.29999923706055px;
+  --chatgpt-com-semantic-heading-1-font-style: normal;
+  --chatgpt-com-semantic-heading-1-font-weight: 700;
+  --chatgpt-com-semantic-heading-1-letter-spacing: -1.9199999570846558px;
+  --chatgpt-com-semantic-heading-1-line-height: 64px;
+  --chatgpt-com-semantic-heading-2-font-family: "Inter", Helvetica;
+  --chatgpt-com-semantic-heading-2-font-size: 45.900001525878906px;
+  --chatgpt-com-semantic-heading-2-font-style: normal;
+  --chatgpt-com-semantic-heading-2-font-weight: 700;
+  --chatgpt-com-semantic-heading-2-letter-spacing: -1.440000057220459px;
+  --chatgpt-com-semantic-heading-2-line-height: 55.68000030517578px;
+  --chatgpt-com-semantic-heading-3-font-family: "Inter", Helvetica;
+  --chatgpt-com-semantic-heading-3-font-size: 16.299999237060547px;
+  --chatgpt-com-semantic-heading-3-font-style: normal;
+  --chatgpt-com-semantic-heading-3-font-weight: 600;
+  --chatgpt-com-semantic-heading-3-letter-spacing: -0.17000000178813934px;
+  --chatgpt-com-semantic-heading-3-line-height: 28px;
+  --chatgpt-com-semantic-link-font-family: "Inter", Helvetica;
+  --chatgpt-com-semantic-link-font-size: 333.6000061035156px;
+  --chatgpt-com-semantic-link-font-style: normal;
+  --chatgpt-com-semantic-link-font-weight: 700;
+  --chatgpt-com-semantic-link-letter-spacing: -6.860000133514404px;
+  --chatgpt-com-semantic-link-line-height: 343px;
+  --chatgpt-com-semantic-link-underline-font-family: "Inter", Helvetica;
+  --chatgpt-com-semantic-link-underline-font-size: 13.5px;
+  --chatgpt-com-semantic-link-underline-font-style: normal;
+  --chatgpt-com-semantic-link-underline-font-weight: 400;
+  --chatgpt-com-semantic-link-underline-letter-spacing: -0.14000000059604645px;
+  --chatgpt-com-semantic-link-underline-line-height: 22.959999084472656px;
+  --developer-apple-com-inter-regular-font-family: "Inter", Helvetica;
+  --developer-apple-com-inter-regular-font-size: 16.899999618530273px;
+  --developer-apple-com-inter-regular-font-style: normal;
+  --developer-apple-com-inter-regular-font-weight: 400;
+  --developer-apple-com-inter-regular-letter-spacing: -0.37400001287460327px;
+  --developer-apple-com-inter-regular-line-height: normal;
+  --developer-apple-com-inter-semi-bold-font-family: "Inter", Helvetica;
+  --developer-apple-com-inter-semi-bold-font-size: 21.399999618530273px;
+  --developer-apple-com-inter-semi-bold-font-style: normal;
+  --developer-apple-com-inter-semi-bold-font-weight: 600;
+  --developer-apple-com-inter-semi-bold-letter-spacing: 0.2160000056028366px;
+  --developer-apple-com-inter-semi-bold-line-height: 32px;
+  --developer-apple-com-semantic-button-font-family: "Inter", Helvetica;
+  --developer-apple-com-semantic-button-font-size: 17px;
+  --developer-apple-com-semantic-button-font-style: normal;
+  --developer-apple-com-semantic-button-font-weight: 400;
+  --developer-apple-com-semantic-button-letter-spacing: 0px;
+  --developer-apple-com-semantic-button-line-height: 25px;
+  --developer-apple-com-semantic-heading-1-font-family: "Inter", Helvetica;
+  --developer-apple-com-semantic-heading-1-font-size: 51.79999923706055px;
+  --developer-apple-com-semantic-heading-1-font-style: normal;
+  --developer-apple-com-semantic-heading-1-font-weight: 700;
+  --developer-apple-com-semantic-heading-1-letter-spacing: -0.2800000011920929px;
+  --developer-apple-com-semantic-heading-1-line-height: 60px;
+  --developer-apple-com-semantic-heading-2-font-family: "Inter", Helvetica;
+  --developer-apple-com-semantic-heading-2-font-size: 44.29999923706055px;
+  --developer-apple-com-semantic-heading-2-font-style: normal;
+  --developer-apple-com-semantic-heading-2-font-weight: 600;
+  --developer-apple-com-semantic-heading-2-letter-spacing: -0.14399999380111694px;
+  --developer-apple-com-semantic-heading-2-line-height: 52px;
+  --developer-apple-com-semantic-heading-3-font-family: "Inter", Helvetica;
+  --developer-apple-com-semantic-heading-3-font-size: 17px;
+  --developer-apple-com-semantic-heading-3-font-style: normal;
+  --developer-apple-com-semantic-heading-3-font-weight: 600;
+  --developer-apple-com-semantic-heading-3-letter-spacing: -0.37400001287460327px;
+  --developer-apple-com-semantic-heading-3-line-height: 21px;
+  --developer-apple-com-semantic-item-font-family: "Inter", Helvetica;
+  --developer-apple-com-semantic-item-font-size: 17px;
+  --developer-apple-com-semantic-item-font-style: normal;
+  --developer-apple-com-semantic-item-font-weight: 400;
+  --developer-apple-com-semantic-item-letter-spacing: -0.37400001287460327px;
+  --developer-apple-com-semantic-item-line-height: 25px;
+  --developer-apple-com-semantic-label-font-family: "Inter", Helvetica;
+  --developer-apple-com-semantic-label-font-size: 12px;
+  --developer-apple-com-semantic-label-font-style: normal;
+  --developer-apple-com-semantic-label-font-weight: 400;
+  --developer-apple-com-semantic-label-letter-spacing: -0.11999999731779099px;
+  --developer-apple-com-semantic-label-line-height: 16px;
+  --developer-apple-com-semantic-link-font-family: "Inter", Helvetica;
+  --developer-apple-com-semantic-link-font-size: 21.799999237060547px;
+  --developer-apple-com-semantic-link-font-style: normal;
+  --developer-apple-com-semantic-link-font-weight: 600;
+  --developer-apple-com-semantic-link-letter-spacing: 0.2160000056028366px;
+  --developer-apple-com-semantic-link-line-height: 32px;
+  --vercel-com-geist-medium-font-family: "Geist", Helvetica;
+  --vercel-com-geist-medium-font-size: 20px;
+  --vercel-com-geist-medium-font-style: normal;
+  --vercel-com-geist-medium-font-weight: 500;
+  --vercel-com-geist-medium-letter-spacing: -0.4000000059604645px;
+  --vercel-com-geist-medium-line-height: 26px;
+  --vercel-com-geist-semibold-font-family: "Geist", Helvetica;
+  --vercel-com-geist-semibold-font-size: 16px;
+  --vercel-com-geist-semibold-font-style: normal;
+  --vercel-com-geist-semibold-font-weight: 600;
+  --vercel-com-geist-semibold-letter-spacing: -0.3199999928474426px;
+  --vercel-com-geist-semibold-line-height: 24px;
+  --vercel-com-semantic-button-font-family: "Geist", Helvetica;
+  --vercel-com-semantic-button-font-size: 14px;
+  --vercel-com-semantic-button-font-style: normal;
+  --vercel-com-semantic-button-font-weight: 500;
+  --vercel-com-semantic-button-letter-spacing: 0px;
+  --vercel-com-semantic-button-line-height: 20px;
+  --vercel-com-semantic-heading-1-font-family: "Geist", Helvetica;
+  --vercel-com-semantic-heading-1-font-size: 32px;
+  --vercel-com-semantic-heading-1-font-style: normal;
+  --vercel-com-semantic-heading-1-font-weight: 600;
+  --vercel-com-semantic-heading-1-letter-spacing: -1.2799999713897705px;
+  --vercel-com-semantic-heading-1-line-height: 40px;
+  --vercel-com-semantic-heading-2-font-family: "Geist", Helvetica;
+  --vercel-com-semantic-heading-2-font-size: 32px;
+  --vercel-com-semantic-heading-2-font-style: normal;
+  --vercel-com-semantic-heading-2-font-weight: 600;
+  --vercel-com-semantic-heading-2-letter-spacing: -1.2799999713897705px;
+  --vercel-com-semantic-heading-2-line-height: 40px;
+  --vercel-com-semantic-heading-5-font-family: "Geist", Helvetica;
+  --vercel-com-semantic-heading-5-font-size: 14px;
+  --vercel-com-semantic-heading-5-font-style: normal;
+  --vercel-com-semantic-heading-5-font-weight: 400;
+  --vercel-com-semantic-heading-5-letter-spacing: 0px;
+  --vercel-com-semantic-heading-5-line-height: 20px;
+  --vercel-com-semantic-input-font-family: "Geist", Helvetica;
+  --vercel-com-semantic-input-font-size: 14px;
+  --vercel-com-semantic-input-font-style: normal;
+  --vercel-com-semantic-input-font-weight: 400;
+  --vercel-com-semantic-input-letter-spacing: 0px;
+  --vercel-com-semantic-input-line-height: normal;
+  --vercel-com-semantic-link-font-family: "Geist", Helvetica;
+  --vercel-com-semantic-link-font-size: 14px;
+  --vercel-com-semantic-link-font-style: normal;
+  --vercel-com-semantic-link-font-weight: 500;
+  --vercel-com-semantic-link-letter-spacing: 0px;
+  --vercel-com-semantic-link-line-height: 20px;
+  --vercel-com-semantic-time-font-family: "Geist", Helvetica;
+  --vercel-com-semantic-time-font-size: 13px;
+  --vercel-com-semantic-time-font-style: normal;
+  --vercel-com-semantic-time-font-weight: 400;
+  --vercel-com-semantic-time-letter-spacing: 0px;
+  --vercel-com-semantic-time-line-height: 16px;
+  --vercelcombiloba-flower: rgba(191, 122, 240, 1);
+  --vercelcomdodger-blue: rgba(82, 168, 255, 1);
+  --vercelcompurple-heart: rgba(120, 32, 188, 1);
+  --vercelcomscience-blue: rgba(0, 104, 214, 1);
+\}
+
+:root \{
+  --animate-spin: spin 1s linear infinite;
+\}
+
+.animate-fade-in \{
+  animation: fade-in 1s var(--animation-delay, 0s) ease forwards;
+\}
+
+.animate-fade-up \{
+  animation: fade-up 1s var(--animation-delay, 0s) ease forwards;
+\}
+
+.animate-marquee \{
+  animation: marquee var(--duration) infinite linear;
+\}
+
+.animate-marquee-vertical \{
+  animation: marquee-vertical var(--duration) linear infinite;
+\}
+
+.animate-shimmer \{
+  animation: shimmer 8s infinite;
+\}
+
+.animate-spin \{
+  animation: var(--animate-spin);
+\}
+
+@keyframes spin \{
+  to \{
+    transform: rotate(1turn);
+  \}
+\}
+
+@keyframes image-glow \{
+  0% \{
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
+  \}
+
+  10% \{
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+  \}
+
+  to \{
+    opacity: 0.4;
+  \}
+\}
+
+@keyframes fade-in \{
+  0% \{
+    opacity: 0;
+    transform: translateY(-10px);
+  \}
+
+  to \{
+    opacity: 1;
+    transform: none;
+  \}
+\}
+
+@keyframes fade-up \{
+  0% \{
+    opacity: 0;
+    transform: translateY(20px);
+  \}
+
+  to \{
+    opacity: 1;
+    transform: none;
+  \}
+\}
+
+@keyframes shimmer \{
+  0%,
+  90%,
+  to \{
+    background-position: calc(-100% - var(--shimmer-width)) 0;
+  \}
+
+  30%,
+  60% \{
+    background-position: calc(100% + var(--shimmer-width)) 0;
+  \}
+\}
+
+@keyframes marquee \{
+  0% \{
+    transform: translate(0);
+  \}
+
+  to \{
+    transform: translateX(calc(-100% - var(--gap)));
+  \}
+\}
+
+@keyframes marquee-vertical \{
+  0% \{
+    transform: translateY(0);
+  \}
+
+  to \{
+    transform: translateY(calc(-100% - var(--gap)));
+  \}
+\}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base \{
+  :root \{
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --card: transparent;
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 215 20.2% 65.1%;
+
+    --radius: 0.5rem;
+  \}
+
+  .dark \{
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+
+    --card: transparent;
+    --card-foreground: 213 31% 91%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 216 34% 17%;
+
+    --radius: 0.5rem;
+  \}
+\}
+
+@layer base \{
+  * \{
+    @apply border-border;
+  \}
+
+  body \{
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  \}
+\}

@@ -1,0 +1,503 @@
+---
+title: "import re"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p2155"
+created: "20250324T191156"
+modified: "20250324T191257"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+import re
+from typing import Dict, List, Tuple
+import collections
+import json
+
+class BalancedNarrativeAnalyzer:
+    """
+    A class designed to analyze narratives while minimizing bias through balanced evaluation.
+    Uses systematic feature extraction and scoring mechanisms.
+    """
+    
+    def __init__(self):
+        # Define neutral patterns for analysis
+        self.patterns = \{
+            'temporal': r'\b(?:at|on|during|from)\s+\d\{1,2\}-\d\{1,2\}\b',
+            'frequency': r'(?:daily|weekly|monthly|regularly)',
+            'contact': r'(?:email|call|message|contact)',
+            'threat': r'(?:threaten|warn|state|claim)',
+            'action': r'(?:take|make|do|perform)'
+        \}
+        
+        # Initialize counters for balanced tracking
+        self.feature_counts = collections.defaultdict(int)
+        self.context_counts = collections.defaultdict(lambda: collections.Counter())
+        
+    def preprocess_text(self, text: str) -\> str:
+        """
+        Clean and normalize text for analysis.
+        Removes extra whitespace and converts to lowercase.
+        """
+        return ' '.join(text.lower().split())
+
+    def extract_features(self, text: str) -\> Dict[str, List[Tuple[int, str]]]:
+        """
+        Extract features while tracking context and frequency.
+        Returns dictionary mapping pattern types to their occurrences.
+        """
+        cleaned_text = self.preprocess_text(text)
+        features = \{\}
+        
+        for pattern_type, pattern in self.patterns.items():
+            matches = [(m.start(), m.group()) 
+                      for m in re.finditer(pattern, cleaned_text)]
+            
+            if matches:
+                features[pattern_type] = matches
+                self.feature_counts[pattern_type] += len(matches)
+                
+                # Track contextual information
+                for pos, match in matches:
+                    context = cleaned_text[max(0, pos-20):min(len(cleaned_text), pos+20)]
+                    self.context_counts[pattern_type][context] += 1
+                    
+        return features
+
+    def analyze_narrative(self, text: str) -\> Dict:
+        """
+        Perform comprehensive narrative analysis with balanced scoring.
+        Returns detailed analysis including feature frequencies and contexts.
+        """
+        features = self.extract_features(text)
+        
+        # Calculate balanced scores based on pattern diversity
+        total_patterns = sum(self.patterns.values())
+        diversity_score = len(features) / len(self.patterns)
+        
+        # Calculate context variety score
+        context_scores = \{\}
+        for pattern_type, contexts in self.context_counts.items():
+            total_occurrences = sum(contexts.values())
+            unique_contexts = len(contexts)
+            context_scores[pattern_type] = unique_contexts / total_occurrences if total_occurrences \> 0 else 0
+        
+        return \{
+            'features': features,
+            'diversity_score': diversity_score,
+            'context_variety': context_scores,
+            'pattern_frequencies': dict(self.feature_counts)
+        \}
+
+import re
+from typing import Dict, List, Tuple
+import collections
+import json
+
+class MetaAwareNarrativeAnalyzer(BalancedNarrativeAnalyzer):
+    """
+    Extends the balanced analyzer with meta-level analysis capabilities.
+    Tracks analysis patterns and provides self-evaluation metrics.
+    """
+    
+    def __init__(self):
+        super().__init__()
+        # Add meta-tracking capabilities
+        self.meta_patterns = \{
+            'analysis_bias': r'(?:bias|manipulative|false)',
+            'emotional_loading': r'(?:angry|afraid|scared|sorry)',
+            'legal_threats': r'(?:legal|action|lawsuit|attorney)'
+        \}
+        
+        # Initialize meta-metrics
+        self.analysis_history = []
+        self.pattern_usage_counts = collections.defaultdict(int)
+        self.evaluation_metrics = \{
+            'meta_coverage': [],
+            'pattern_balance': [],
+            'self_consistency': []
+        \}
+
+    def extract_meta_features(self, text: str) -\> Dict[str, List[Tuple[int, str]]]:
+        """
+        Extract meta-level features indicating potential bias in analysis.
+        Returns dictionary mapping meta-pattern types to occurrences.
+        """
+        cleaned_text = self.preprocess_text(text)
+        meta_features = \{\}
+        
+        for pattern_type, pattern in self.meta_patterns.items():
+            matches = [(m.start(), m.group()) 
+                      for m in re.finditer(pattern, cleaned_text)]
+            
+            if matches:
+                meta_features[pattern_type] = matches
+                self.pattern_usage_counts[pattern_type] += len(matches)
+                
+        return meta_features
+
+    def evaluate_analysis_quality(self, features: Dict, meta_features: Dict) -\> Dict:
+        """
+        Evaluate the quality of the current analysis based on meta-criteria.
+        Returns metrics about analysis balance and potential bias.
+        """
+        # Calculate meta-metrics
+        total_patterns = sum(len(v) for v in features.values())
+        meta_pattern_count = sum(len(v) for v in meta_features.values())
+        
+        # Coverage metric (how well do we cover different pattern types?)
+        coverage_score = len(features) / len(self.patterns)
+        
+        # Balance metric (distribution across pattern categories)
+        pattern_distribution = \{k: len(v)/total_patterns 
+                              for k, v in features.items()\}
+        balance_score = 1 - max(pattern_distribution.values()) if total_patterns \> 0 else 0
+        
+        # Consistency metric (stability of pattern usage over time)
+        if self.analysis_history:
+            historical_avg = \{
+                k: sum(d[k] for d in self.analysis_history) / len(self.analysis_history)
+                for k in self.patterns.keys()
+            \}
+            consistency_score = sum(abs(historical_avg[k] - pattern_distribution.get(k, 0))
+                                  for k in self.patterns.keys()) / len(self.patterns)
+        else:
+            consistency_score = 1.0
+            
+        # Store metrics for trend analysis
+        self.evaluation_metrics['meta_coverage'].append(coverage_score)
+        self.evaluation_metrics['pattern_balance'].append(balance_score)
+        self.evaluation_metrics['self_consistency'].append(consistency_score)
+        
+        return \{
+            'coverage_score': coverage_score,
+            'balance_score': balance_score,
+            'consistency_score': consistency_score,
+            'meta_pattern_ratio': meta_pattern_count / total_patterns if total_patterns \> 0 else 0\}
+
+# Combine the two codes together
+import re
+from typing import Dict, List, Tuple
+import collections
+import json
+
+class BalancedNarrativeAnalyzer:
+    """
+    A class designed to analyze narratives while minimizing bias through balanced evaluation.
+    Uses systematic feature extraction and scoring mechanisms.
+    """
+    
+    def __init__(self):
+        # Define neutral patterns for analysis
+        self.patterns = \{
+            'temporal': r'\b(?:at|on|during|from)\s+\d\{1,2\}-\d\{1,2\}\b',
+            'frequency': r'(?:daily|weekly|monthly|regularly)',
+            'contact': r'(?:email|call|message|contact)',
+            'threat': r'(?:threaten|warn|state|claim)',
+            'action': r'(?:take|make|do|perform)'
+        \}
+        
+        # Initialize counters for balanced tracking
+        self.feature_counts = collections.defaultdict(int)
+        self.context_counts = collections.defaultdict(lambda: collections.Counter())
+        
+    def preprocess_text(self, text: str) -\> str:
+        """
+        Clean and normalize text for analysis.
+        Removes extra whitespace and converts to lowercase.
+        """
+        return ' '.join(text.lower().split())
+
+    def extract_features(self, text: str) -\> Dict[str, List[Tuple[int, str]]]:
+        """
+        Extract features while tracking context and frequency.
+        Returns dictionary mapping pattern types to their occurrences.
+        """
+        cleaned_text = self.preprocess_text(text)
+        features = \{\}
+        
+        for pattern_type, pattern in self.patterns.items():
+            matches = [(m.start(), m.group()) 
+                      for m in re.finditer(pattern, cleaned_text)]
+            
+            if matches:
+                features[pattern_type] = matches
+                self.feature_counts[pattern_type] += len(matches)
+                
+                # Track contextual information
+                for pos, match in matches:
+                    context = cleaned_text[max(0, pos-20):min(len(cleaned_text), pos+20)]
+                    self.context_counts[pattern_type][context] += 1
+                    
+        return features
+
+    def analyze_narrative(self, text: str) -\> Dict:
+        """
+        Perform comprehensive narrative analysis with balanced scoring.
+        Returns detailed analysis including feature frequencies and contexts.
+        """
+        features = self.extract_features(text)
+        
+        # Calculate balanced scores based on pattern diversity
+        total_patterns = sum(self.patterns.values())
+        diversity_score = len(features) / len(self.patterns)
+        
+        # Calculate context variety score
+        context_scores = \{\}
+        for pattern_type, contexts in self.context_counts.items():
+            total_occurrences = sum(contexts.values())
+            unique_contexts = len(contexts)
+            context_scores[pattern_type] = unique_contexts / total_occurrences if total_occurrences \> 0 else 0
+        
+        return \{
+            'features': features,
+            'diversity_score': diversity_score,
+            'context_variety': context_scores,
+            'pattern_frequencies': dict(self.feature_counts)
+        \}
+class MetaAwareNarrativeAnalyzer(BalancedNarrativeAnalyzer):
+    """
+    Extends the balanced analyzer with meta-level analysis capabilities.
+    Tracks analysis patterns and provides self-evaluation metrics.
+    """
+    
+    def __init__(self):
+        super().__init__()
+        # Add meta-tracking capabilities
+        self.meta_patterns = \{
+            'analysis_bias': r'(?:bias|manipulative|false)',
+            'emotional_loading': r'(?:angry|afraid|scared|sorry)',
+            'legal_threats': r'(?:legal|action|lawsuit|attorney)'
+        \}
+        
+        # Initialize meta-metrics
+        self.analysis_history = []
+        self.pattern_usage_counts = collections.defaultdict(int)
+        self.evaluation_metrics = \{
+            'meta_coverage': [],
+            'pattern_balance': [],
+            'self_consistency': []
+        \}
+
+    def extract_meta_features(self, text: str) -\> Dict[str, List[Tuple[int, str]]]:
+        """
+        Extract meta-level features indicating potential bias in analysis.
+        Returns dictionary mapping meta-pattern types to occurrences.
+        """
+        cleaned_text = self.preprocess_text(text)
+        meta_features = \{\}
+        
+        for pattern_type, pattern in self.meta_patterns.items():
+            matches = [(m.start(), m.group()) 
+                      for m in re.finditer(pattern, cleaned_text)]
+            
+            if matches:
+                meta_features[pattern_type] = matches
+                self.pattern_usage_counts[pattern_type] += len(matches)
+                
+        return meta_features
+
+    def evaluate_analysis_quality(self, features: Dict, meta_features: Dict) -\> Dict:
+        """
+        Evaluate the quality of the current analysis based on meta-criteria.
+        Returns metrics about analysis balance and potential bias.
+        """
+        # Calculate meta-metrics
+        total_patterns = sum(len(v) for v in features.values())
+        meta_pattern_count = sum(len(v) for v in meta_features.values())
+        
+        # Coverage metric (how well do we cover different pattern types?)
+        coverage_score = len(features) / len(self.patterns)
+        
+        # Balance metric (distribution across pattern categories)
+        pattern_distribution = \{k: len(v)/total_patterns 
+                              for k, v in features.items()\}
+        balance_score = 1 - max(pattern_distribution.values()) if total_patterns \> 0 else 0
+        
+        # Consistency metric (stability of pattern usage over time)
+        if self.analysis_history:
+            historical_avg = \{
+                k: sum(d[k] for d in self.analysis_history) / len(self.analysis_history)
+                for k in self.patterns.keys()
+            \}
+            consistency_score = sum(abs(historical_avg[k] - pattern_distribution.get(k, 0))
+                                  for k in self.patterns.keys()) / len(self.patterns)
+        else:
+            consistency_score = 1.0
+            
+        # Store metrics for trend analysis
+        self.evaluation_metrics['meta_coverage'].append(coverage_score)
+        self.evaluation_metrics['pattern_balance'].append(balance_score)
+        self.evaluation_metrics['self_consistency'].append(consistency_score)
+        
+        return \{
+            'coverage_score': coverage_score,
+            'balance_score': balance_score,
+            'consistency_score': consistency_score,
+            'meta_pattern_ratio': meta_pattern_count / total_patterns if total_patterns \> 0 else 0\}
+
+# The text I will be analyzing.
+
+text = """
+He emailed me and stated that I had until the end of the day to contact him or I will be sorry and he would take legal action against me. 
+He had repeatedly contacted me in a similar manner. 
+He has also contacted my family and friends, threatening them with legal actions against me for him. (x) 
+He has repeatedly lied to me to try to make me believe I am at fault for his emotionally abusive and manipulative behavior towards me.
+He has made repeated unwanted contact with me and has reached out to my family and friends in places of work. 
+He has abused me 2-5 times weekly. From 8-23 present, 
+he has called and emailed me numerous times with frivolous legal threats.
+"""
+
+analyzer = MetaAwareNarrativeAnalyzer()
+
+analysis_result = analyzer.analyze_narrative(text)
+meta_features = analyzer.extract_meta_features(text)
+evaluation_result = analyzer.evaluate_analysis_quality(analysis_result["features"], meta_features)
+
+# I will do a JSON output of the data
+
+print(json.dumps(\{
+    "analysis_result": analysis_result,
+    "meta_features": meta_features,
+    "evaluation_result": evaluation_result
+\}, indent=4))
+
+\{
+    "analysis_result": \{
+        "features": \{
+            "contact": [
+                [
+                    3,
+                    "email"
+                ],
+                [
+                    129,
+                    "contact"
+                ],
+                [
+                    205,
+                    "contact"
+                ],
+                [
+                    215,
+                    "contact"
+                ],
+                [
+                    307,
+                    "call"
+                ],
+                [
+                    318,
+                    "email"
+                ]
+            ],
+            "threat": [
+                [
+                    70,
+                    "threaten"
+                ],
+                [
+                    338,
+                    "threats"
+                ]
+            ],
+            "action": [
+                [
+                    100,
+                    "action"
+                ],
+                [
+                    35,
+                    "stated"
+                ],
+                [
+                    114,
+                    "make"
+                ],
+                [
+                    200,
+                    "made"
+                ]
+            ],
+            "temporal": [
+                [
+                    287,
+                    "8-23"
+                ]
+            ],
+            "frequency": [
+                [
+                    271,
+                    "weekly"
+                ]
+            ]
+        \},
+        "diversity_score": 1.0,
+        "context_variety": \{
+            "contact": 0.8333333333333334,
+            "threat": 1.0,
+            "action": 1.0,
+            "temporal": 1.0,
+            "frequency": 1.0
+        \},
+        "pattern_frequencies": \{
+            "temporal": 1,
+            "frequency": 1,
+            "contact": 6,
+            "threat": 2,
+            "action": 4
+        \}
+    \},
+    "meta_features": \{
+        "emotional_loading": [
+            [
+                56,
+                "sorry"
+            ],
+            [
+                144,
+                "abusive"
+            ],
+            [
+                144,
+                "manipulative"
+            ],
+            [
+                279,
+                "abused"
+            ]
+        ],
+        "legal_threats": [
+            [
+                63,
+                "legal"
+            ],
+            [
+                100,
+                "action"
+            ],
+            [
+                109,
+                "fault"
+            ],
+            [
+                333,
+                "legal"
+            ]
+        ],
+        "analysis_bias": [
+            [
+                144,
+                "manipulative"
+            ],
+            [
+                160,
+                "fault"
+            ]
+        ]
+    \},
+    "evaluation_result": \{
+        "coverage_score": 1.0,
+        "balance_score": 0.6666666666666666,
+        "consistency_score": 0.0,
+        "meta_pattern_ratio": 0.5
+    \}
+\}

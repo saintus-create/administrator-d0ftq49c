@@ -1,0 +1,40 @@
+---
+title: "from __future__ import annotations"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p349"
+created: "20251222T93820"
+modified: "20251222T94116"
+category: "development"
+source: "notes_export.csv"
+---
+
+from __future__ import annotations
+import re, subprocess, structlog
+from pathlib import Path
+from typing import List, Tuple
+log = structlog.get_logger(__name__)
+class SafetyAuditor:
+    """Two-tier audit: fast static regex + LLM-based semantic check."""
+    STATIC_DENY = re.compile(
+        r"\b(rm\s+-rf\s+/|dd\s+if=/dev/zero|:\(\)\\{\s*:\|\\{\s*:\\}&\s*;\\}|chmod\s+777|eval\s*\(|exec\s*\(|os\.system|subprocess\.call)\b",
+        re.I,
+    )
+    def audit(self, content: str) -\> Tuple[bool, List[str]]:
+        """Returns (safe, list-of-reasons)."""
+        hits = self.STATIC_DENY.findall(content)
+        if hits:
+            return False, [f"Static blocklist hit: \{h\}" for h in hits]
+        return True, []
+    def lint_file(self, path: Path) -\> Tuple[bool, List[str]]:
+        """Run ruff on a Python file."""
+        try:
+            proc = subprocess.run(
+                ["ruff", "check", "--quiet", str(path)],
+                capture_output=True,
+                text=True,
+            )
+            if proc.returncode == 0:
+                return True, []
+            return False, [f"Lint: \{proc.stdout.strip()\}"]
+        except FileNotFoundError:
+            log.warning("ruff not found � skipping lint")
+            return True, []

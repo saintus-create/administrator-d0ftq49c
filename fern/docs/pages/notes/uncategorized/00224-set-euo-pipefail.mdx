@@ -1,0 +1,378 @@
+---
+title: "set -euo pipefail"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p2789"
+created: "20260408T231302"
+modified: "20260408T231656"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+set -euo pipefail
+trap 'echo "[!] Script failed at line $LINENO. Check: tail -f /var/log/onedrop-setup.log"' ERR
+
+# --------------------------------------
+# ? Configuration
+# --------------------------------------
+LOG_FILE="/var/log/onedrop-setup.log"
+OSQUERY_CONFIG_DIR="/etc/osquery"
+SANTA_CONFIG_DIR="/etc/santa"
+BACKUP_DIR="/opt/onedrop-backup-$(date +%Y%m%d-%H%M%S)"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# --------------------------------------
+# ? Logging functions
+# --------------------------------------
+setup_logging() \{
+    sudo touch "$LOG_FILE"
+    sudo chmod 644 "$LOG_FILE"
+    exec 1\> \>(tee -a "$LOG_FILE")
+    exec 2\>&1
+\}
+
+log_info() \{ echo -e "$\{GREEN\}[+]$\{NC\} $(date '+%Y-%m-%d %H:%M:%S') - $1"; \}
+log_warn() \{ echo -e "$\{YELLOW\}[!]$\{NC\} $(date '+%Y-%m-%d %H:%M:%S') - $1"; \}
+log_error() \{ echo -e "$\{RED\}[ERROR]$\{NC\} $(date '+%Y-%m-%d %H:%M:%S') - $1"; \}
+
+# --------------------------------------
+# ? Prerequisite checks
+# --------------------------------------
+check_prerequisites() \{
+    log_info "Running prerequisite checks..."
+
+    MACOS_VERSION=$(sw_vers -productVersion)
+    MACOS_MAJOR=$(echo "$MACOS_VERSION" | cut -d. -f1)
+    if [ "$MACOS_MAJOR" -lt 13 ]; then
+        log_error "macOS 13+ (Ventura+) required. Detected: $MACOS_VERSION"
+        exit 1
+    fi
+    log_info "macOS $MACOS_VERSION detected"
+
+    if [ "$(uname -m)" = "arm64" ] && ! pgrep oahd \>/dev/null 2\>&1; then
+        log_warn "Rosetta 2 not detected. Install if needed: softwareupdate --install-rosetta --agree-to-license"
+    fi
+
+    # Backup existing configs
+    if [ -d "$OSQUERY_CONFIG_DIR" ] || [ -d "$SANTA_CONFIG_DIR" ]; then
+        log_info "Backing up configs to $BACKUP_DIR"
+        sudo mkdir -p "$BACKUP_DIR"
+        [ -d "$OSQUERY_CONFIG_DIR" ] && sudo cp -r "$OSQUERY_CONFIG_DIR" "$BACKUP_DIR/"
+        [ -d "$SANTA_CONFIG_DIR" ] && sudo cp -r "$SANTA_CONFIG_DIR" "$BACKUP_DIR/"
+    fi
+\}
+
+# --------------------------------------
+# ? Install Homebrew
+# --------------------------------------
+install_homebrew() \{
+    if ! command -v brew &\> /dev/null; then
+        log_info "Installing Homebrew..."
+        NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+        if [ "$(uname -m)" = "arm64" ]; then
+            echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' \>\> "$HOME/.zprofile"
+            eval "$(/opt/homebrew/bin/brew shellenv)"
+        fi
+    else
+        log_info "Homebrew already installed, updating..."
+        brew update
+    fi
+\}
+
+# --------------------------------------
+# ? Install & Configure osquery
+# --------------------------------------
+install_osquery() \{
+    log_info "Installing osquery..."
+    brew install osquery
+
+    sudo mkdir -p "$OSQUERY_CONFIG_DIR"
+
+    sudo tee "$OSQUERY_CONFIG_DIR/osquery.conf" \> /dev/null \<\<'EOF'
+\{
+  "options": \{
+    "config_plugin": "filesystem",
+    "logger_plugin": "filesystem",
+    "logger_path": "/var/log/osquery",
+    "pidfile": "/var/run/osquery.pid",
+    "events_expiry": 60,
+    "database_path": "/var/osquery/osquery.db",
+    "audit_allow_config": true,
+    "audit_persist": true,
+    "disable_audit": false,
+    "schedule_splay_percent": 10,
+    "verbose": false,
+    "worker_threads": 4
+  \},
+  "schedule": \{
+    "system_info": \{
+      "query": "SELECT hostname, cpu_brand, physical_memory FROM system_info;",
+      "interval": 3600
+    \},
+    "suspicious_processes": \{
+      "query": "SELECT pid, name, path, cmdline, uid, start_time FROM processes WHERE on_disk = 0 OR name LIKE '%malware%' OR cmdline LIKE '%curl%http%';",
+      "interval": 60
+    \},
+    "process_events": \{
+      "query": "SELECT pid, parent, path, cmdline, uid, time FROM process_events;",
+      "interval": 10
+    \},
+    "file_events": \{
+      "query": "SELECT target_path, action, uid, md5 FROM file_events;",
+      "interval": 60
+    \},
+    "socket_events": \{
+      "query": "SELECT action, family, protocol, local_address, remote_address, pid FROM socket_events;",
+      "interval": 30
+    \},
+    "launchd": \{
+      "query": "SELECT name, path, run_at_load, disabled FROM launchd;",
+      "interval": 300
+    \},
+    "gatekeeper_filevault": \{
+      "query": "SELECT assessments_enabled, dev_id_enabled FROM gatekeeper; SELECT * FROM filevault_status;",
+      "interval": 86400
+    \}
+  \},
+  "file_paths": \{
+    "sensitive": [
+      "/Users/%%/.ssh/%%",
+      "/Users/%%/.zshrc",
+      "/Library/LaunchDaemons/%%",
+      "/Library/LaunchAgents/%%"
+    ]
+  \}
+\}
+EOF
+
+    # Log rotation
+    sudo tee /etc/newsyslog.d/osquery.conf \> /dev/null \<\<'EOF'
+/var/log/osquery/osqueryd.results.log root:wheel 640 7 * @T00 J
+/var/log/osquery/osqueryd.INFO root:wheel 640 7 * @T00 J
+EOF
+
+    # Create osquery user if missing
+    if ! dscl . list /Users | grep -q "_osquery"; then
+        sudo dscl . -create /Users/_osquery UserShell /usr/bin/false RealName "osquery" PrimaryGroupID 399 UniqueID 399 NFSHomeDirectory /var/empty
+    fi
+
+    sudo chown -R _osquery:wheel /var/log/osquery /var/osquery 2\>/dev/null || true
+    sudo launchctl load -w /Library/LaunchDaemons/com.osquery.osqueryd.plist 2\>/dev/null || true
+
+    log_info "osquery installed and configured"
+\}
+
+# --------------------------------------
+# ?? Install & Configure Santa (northpolesec)
+# --------------------------------------
+install_santa() \{
+    log_info "Installing Santa (northpolesec fork)..."
+    brew install --cask santa
+
+    # Modern Santa paths (2026)
+    SANTA_BIN="/Applications/Santa.app/Contents/MacOS/santactl"
+    SANTA_DAEMON="/Library/LaunchDaemons/com.northpolesec.santa.daemon.plist"
+
+    sudo mkdir -p "$SANTA_CONFIG_DIR"
+
+    sudo tee "$SANTA_CONFIG_DIR/santa.conf" \> /dev/null \<\<'EOF'
+\{
+  "ClientMode": "MONITOR",
+  "EventLogType": "syslog",
+  "EnableBundles": true,
+  "EnableBinarySigning": true,
+  "EnableTransitiveRules": true,
+  "AllowedPathRegex": [
+    "^/System/",
+    "^/usr/libexec/",
+    "^/usr/bin/",
+    "^/bin/",
+    "^/sbin/",
+    "^/opt/homebrew/",
+    "^/Applications/.*\\.app/",
+    "^/Library/Apple/"
+  ],
+  "BlockedPathRegex": [
+    "^/private/tmp/.*\\.app/",
+    "^/Users/.*/Downloads/.*\\.app/"
+  ]
+\}
+EOF
+
+    sudo launchctl load -w "$SANTA_DAEMON" 2\>/dev/null || log_warn "Santa daemon load failed (reboot may be needed)"
+
+    log_info "Santa installed in MONITOR mode. Approve System Extension if prompted."
+\}
+
+# --------------------------------------
+# ? Configure Unified Logging
+# --------------------------------------
+configure_unified_logging() \{
+    log_info "Configuring unified logging..."
+    sudo log config --mode "level:debug,persist:true" --subsystem com.apple.security 2\>/dev/null || true
+    sudo log config --mode "level:info,persist:true" --subsystem com.apple.audit 2\>/dev/null || true
+
+    # Wrapper script for log extraction
+    sudo tee /usr/local/bin/extract-security-logs.sh \> /dev/null \<\<'EOF'
+#!/bin/bash
+OUTPUT_DIR="/var/log/security-events"
+mkdir -p "$OUTPUT_DIR"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+
+log show --last 1h --predicate 'eventMessage contains "exec" OR eventMessage contains "spawn"' \> "$OUTPUT_DIR/process_$TIMESTAMP.log"
+log show --last 1h --predicate 'eventMessage contains "denied" OR eventMessage contains "sandbox"' \> "$OUTPUT_DIR/access_$TIMESTAMP.log"
+
+find "$OUTPUT_DIR" -name "*.log" -mtime +7 -delete
+EOF
+    sudo chmod +x /usr/local/bin/extract-security-logs.sh
+
+    (crontab -l 2\>/dev/null | grep -v extract-security-logs; echo "0 * * * * /usr/local/bin/extract-security-logs.sh") | crontab -
+    log_info "Unified logging configured"
+\}
+
+# --------------------------------------
+# ? File Integrity Monitoring (Fixed)
+# --------------------------------------
+install_fim() \{
+    log_info "Setting up File Integrity Monitoring with fswatch..."
+    brew install fswatch
+
+    # Wrapper script for launchd (fixes pipeline issue)
+    sudo tee /usr/local/bin/onedrop-fim.sh \> /dev/null \<\<'EOF'
+#!/bin/bash
+fswatch -0 -r -l 5 /etc /Library/LaunchDaemons /Library/LaunchAgents /usr/local/bin | \
+while read -d "" file; do
+    logger "FIM Alert: $file was modified"
+done
+EOF
+    sudo chmod +x /usr/local/bin/onedrop-fim.sh
+
+    sudo tee /Library/LaunchDaemons/com.onedrop.fim.plist \> /dev/null \<\<'EOF'
+\<?xml version="1.0" encoding="UTF-8"?\>
+\<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"\>
+\<plist version="1.0"\>
+\<dict\>
+    \<key\>Label\</key\>
+    \<string\>com.onedrop.fim\</string\>
+    \<key\>ProgramArguments\</key\>
+    \<array\>
+        \<string\>/usr/local/bin/onedrop-fim.sh\</string\>
+    \</array\>
+    \<key\>RunAtLoad\</key\>
+    \<true/\>
+    \<key\>KeepAlive\</key\>
+    \<true/\>
+    \<key\>StandardErrorPath\</key\>
+    \<string\>/var/log/fim-error.log\</string\>
+    \<key\>StandardOutPath\</key\>
+    \<string\>/var/log/fim-output.log\</string\>
+\</dict\>
+\</plist\>
+EOF
+
+    sudo launchctl load -w /Library/LaunchDaemons/com.onedrop.fim.plist
+    log_info "FIM service installed"
+\}
+
+# --------------------------------------
+# ? Performance & Health Monitoring
+# --------------------------------------
+install_perf_monitoring() \{
+    log_info "Installing monitoring tools..."
+    brew install htop
+
+    sudo tee /usr/local/bin/edr-health-check.sh \> /dev/null \<\<'EOF'
+#!/bin/bash
+echo "=== One-Drop EDR Health Check ==="
+pgrep -f osqueryd \>/dev/null && echo "? osquery: Running" || echo "? osquery: Not running"
+pgrep -f santad \>/dev/null && echo "? Santa: Running" || echo "? Santa: Not running"
+pgrep -f onedrop-fim \>/dev/null && echo "? FIM: Running" || echo "? FIM: Not running"
+
+disk_usage=$(df -h / | awk 'NR==2 \{print $5\}' | sed 's/%//')
+[ "$disk_usage" -lt 80 ] && echo "? Disk: $\{disk_usage\}% used" || echo "?? Disk: $\{disk_usage\}% used (high)"
+
+echo "Run 'santactl status' for Santa mode details"
+EOF
+    sudo chmod +x /usr/local/bin/edr-health-check.sh
+    log_info "Health check script ready"
+\}
+
+# --------------------------------------
+# ? Permissions Reminder
+# --------------------------------------
+apply_permissions() \{
+    log_warn "=== MANUAL STEPS REQUIRED ==="
+    echo "1. System Settings ? Privacy & Security ? Full Disk Access"
+    echo "   Add: osqueryd, Santa.app, fswatch, onedrop-fim.sh"
+    echo "2. Approve Santa System Extension (if prompted)"
+    echo "3. Reboot after granting permissions for full functionality"
+    echo ""
+\}
+
+# --------------------------------------
+# ? Verification
+# --------------------------------------
+verify_installation() \{
+    log_info "=== Installation Summary ==="
+
+    command -v osqueryi \>/dev/null && echo "? osquery: $(osqueryi --version 2\>/dev/null | head -1)" || echo "? osquery: Not found"
+    [ -f "/Applications/Santa.app/Contents/MacOS/santactl" ] && echo "? Santa: Installed ($(santactl version 2\>/dev/null || echo 'version unknown'))" || echo "? Santa: Not found"
+
+    echo ""
+    echo "=== Running Services ==="
+    for svc in osqueryd santad onedrop-fim; do
+        pgrep -f "$svc" \>/dev/null && echo "? $svc running" || echo "?? $svc not running"
+    done
+
+    echo ""
+    echo "Log locations:"
+    echo "  osquery: /var/log/osquery/"
+    echo "  Santa:   syslog or /var/db/santa/"
+    echo "  FIM:     /var/log/fim-output.log"
+    echo "  Setup:   $LOG_FILE"
+
+    # Aliases
+    cat \> "$HOME/.onedrop_aliases" \<\<'EOF'
+alias edr-status='sudo /usr/local/bin/edr-health-check.sh'
+alias santa-status='santactl status'
+alias santa-tail='log show --predicate "subsystem == \"com.northpolesec.santa\"" --last 1h'
+alias osquery-shell='osqueryi'
+EOF
+
+    echo ""
+    echo "? Source aliases: source ~/.onedrop_aliases"
+\}
+
+# --------------------------------------
+# ? Main
+# --------------------------------------
+main() \{
+    echo "? One-Drop EDR Setup v2.1"
+    echo "=============================="
+
+    setup_logging
+    check_prerequisites
+    install_homebrew
+    install_osquery
+    install_santa
+    configure_unified_logging
+    install_fim
+    install_perf_monitoring
+    apply_permissions
+    verify_installation
+
+    log_info "? Setup Complete!"
+    echo ""
+    echo "Quick commands:"
+    echo "  edr-status          ? Health check"
+    echo "  santa-status        ? Santa mode"
+    echo "  osquery-shell       ? Interactive queries"
+    echo ""
+    echo "?? Grant Full Disk Access + reboot for best results!"
+\}
+
+main

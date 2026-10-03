@@ -1,0 +1,31 @@
+---
+title: "Antigravity: Core Application Functionality"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p378"
+created: "20251216T121713"
+modified: "20251216T121715"
+category: "development"
+source: "notes_export.csv"
+---
+
+Antigravity: Core Application Functionality
+Antigravity transforms the traditional Integrated Development Environment (IDE) into a Mission Control hub for autonomous, Gemini-powered development agents. It redefines the coding process around asynchronous task delegation and verifiable output.
+1. Core Architectural Components
+The application is conceptually divided into three persistent layers:
+?
+2. The Agentic Development Workflow
+The development cycle in Antigravity moves from synchronous coding to asynchronous task orchestration, enabling a human-in-the-loop (HIL) process:
+Step 1: Dispatch (The Task)
+The developer provides a high-level goal (e.g., "Implement a dark mode toggle on the settings page") via the Mission Control interface. The agent first generates an Implementation Plan Artifact, which is immediately presented to the developer for review and approval.
+Step 2: Generate (The Code & Verification)
+Once the plan is approved, the agent executes the task autonomously within the Agent Environment. This process involves:
+Code Generation: Writing, modifying, and integrating code.
+Browser Actuation: Launching an embedded browser to interact with the changes, ensuring the new feature functions as expected in a live context.
+Artifact Creation: Generating a final Code Diff Artifact and associated Verification Artifacts (e.g., a screenshot of the dark mode working).
+Step 3: Review (The Feedback Loop)
+The developer is notified that the task is complete. They review the Code Diff and the Verification Artifacts directly in Mission Control.
+Accept: If satisfied, the developer merges the changes with a single click.
+Iterate (Human-in-the-Loop): If changes are needed, the developer adds contextual, Google-Doc-style comments directly on the Artifacts (e.g., "The toggle color should be purple, not blue"). The agent receives this feedback and returns to Step 2, refining the code based on the new input without a full restart.
+Step 4: Commit (The Result)
+Upon final acceptance, the agent commits the verified changes to the version control system (e.g., Git) with a descriptive, auto-generated commit message referencing the task ID.
+3. Key Operational Features
+?

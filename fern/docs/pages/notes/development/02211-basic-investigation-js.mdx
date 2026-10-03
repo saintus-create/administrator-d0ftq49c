@@ -1,0 +1,31 @@
+---
+title: "// basic-investigation.js"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p1569"
+created: "20250619T113236"
+modified: "20250619T113248"
+category: "development"
+source: "notes_export.csv"
+---
+
+// basic-investigation.js
+const puppeteer = require('puppeteer');
+
+(async () =\> \{
+  const browser = await puppeteer.launch(\{
+    headless: false, // Set to true if you don't need to see it
+    defaultViewport: null,
+  \});
+
+  const page = await browser.newPage();
+
+  await page.goto('https://sniffies.com');
+
+  // Screenshot
+  await page.screenshot(\{ path: 'example.png', fullPage: true \});
+
+  // Save DOM snapshot
+  const html = await page.content();
+  require('fs').writeFileSync('page.html', html);
+
+  await browser.close();
+\})();

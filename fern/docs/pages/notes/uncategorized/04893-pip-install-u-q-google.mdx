@@ -1,0 +1,20 @@
+---
+title: "!pip install -U -q \"google\""
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p1519"
+created: "20250606T212745"
+modified: "20250606T212746"
+category: "uncategorized"
+source: "notes_export.csv"
+---
+
+!pip install -U -q "google"
+!pip install -U -q "google.genai"
+
+import os
+from google.colab import userdata
+from google.colab import drive
+os.environ["AIzaSyCTJ3ELCRC_7FgdzB1pYGnwXlKZA9raaDM"] = userdata.get("AIzaSyCTJ3ELCRC_7FgdzB1pYGnwXlKZA9raaDM")
+
+drive.mount("/content/drive")
+# Please ensure that uploaded files are available in the AI Studio folder or change the working folder.
+os.chdir("/content/drive/MyDrive/Google AI Studio")

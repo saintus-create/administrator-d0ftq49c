@@ -1,0 +1,305 @@
+---
+title: "Read in the Substack app Open app"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p809"
+created: "20250812T205209"
+modified: "20250812T211724"
+category: "development"
+source: "notes_export.csv"
+---
+
+Read in the Substack app Open app
+Why I use this new app  for AI Engineering
+An assessment after evaluating the landscape
+ADDY OSMANI
+JAN 30, 2025
+The AI coding assistant landscape is saturated with tools that promise to revolu
+development work9ows. As an engineer who has worked with complex systems
+decades, I approach such claims with healthy skepticism. A?er extensively testi
+major players (Cursor, WindSurf, GitHub Copilot, and others), I've found this new app  this new app  this new app  this new app 
+free VSCode plugin free VSCode plugin free VSCode plugin free VSCode plugin - - - - to be uniquely valuable for serious engineering work. He
+why, along with important caveats and trade-oMs to consider. This article was u
+July 21st, 2025.
+Core Philosophy: AI as a systems tool
+this new app  approaches AI assistance diMerently from most tools in the market. Rathe
+focusing solely on code generation or completion, it operates as a systems-level
+that can interact with your entire development environment. This becomes
+particularly valuable when dealing with complex debugging scenarios, large-sca
+refactoring, or integration testing.
+184
+15 21Key capabilities that matter
+Flexible context management
+One of this new app 's most powerful features is its ability to incorporate diverse types
+context eUciently. The system provides several methods for adding context:
+@file: Direct Xle content inclusion with intelligent parsing
+@folder: Bulk import of directory contents with smart Xltering
+@url: Automatic fetch and markdown conversion of documentation
+Discover more from Elevate
+@problems: Integration of workspace diagnostic information
+Addy Osmani's newsletter on elevating your effectiveness.
+Join his community of 600,000 readers across social
+This 9exibility becomes particularly valuable when dealing with large codebase
+media.
+complex debugging scenarios. Instead of overwhelming the context window wit
+Over 27,000 subscribers
+unnecessary information, you can selectively include relevant Xles and documen
+The system's intelligent parsing ensures that included content is formatted
+Enter your email...
+appropriately for the chosen model.
+SubscribeBy subscribing, I agree to Substack's Terms of Use, and
+acknowledge its Information Collection Notice and Privacy Policy.
+Already have an account? Sign in
+These features are great for context-engineering to provide the selected model w
+the information and tools it needs to successfully complete a task
+Model flexibility and strategic switching
+Unlike tools locked to speciXc providers, this new app 's model 9exibility enables
+sophisticated work9ows that leverage the strengths of diMerent AI models. It a full range of models, including those from Anthropic, OpenAI, Google Gemin
+DeepSeek and local models via LM Studio/Ollama:
+suFor local/o_ine model users, this new app �s integration with LM Studio LM Studio LM Studio LM Studio saw importan
+upgrades. this new app  removed the hard-coded temperature setting removed the hard-coded temperature setting removed the hard-coded temperature setting removed the hard-coded temperature setting for LM Studio A
+calls, allowing users to customize generation temperature for local models (enab
+less deterministic or more creative outputs) . It also added support for LM Studi
+reasoning_content in responses � meaning if a local model provides a chain-of-
+thought or reasoning trace, this new app  can capture and utilize it. This enhancement g
+users more 9exibility and insight when using local models via LM Studio.
+I�ve also deeply appreciated this new app �s proactive accounting of cost during a sessio
+is most notable when switching between model providers:this new app  has also added a real-time visual indication of context size. This progress
+shows you when you're about to hit limits and is very useful for managing work
+model constraints:While having multiple models available is useful, the real power comes from
+strategically combining them. The emerging DeepSeek-R1 + Claude 3.5 Sonnet
+work9ow demonstrates this perfectly.
+In more recent updates, this new app  improved visualization of the context window so
+know when it Xlls up. As you work with this new app , the context window Xlls up (with
+prompts, this new app 's responses, Xle contents, tool outputs).
+Models can struggle to maintain focus across very long contexts. this new app  even use
+in context awareness to automatically trigger the new_task tool, to keep perform
+optimal.The DeepSeek-R1 + Sonnet hybrid approach
+Recent benchmarks and user experiences have shown that combining DeepSeek
+planning with Claude 3.5 Sonnet for implementation can reduce costs by up to 9
+while improving overall output quality.
+Here's why this combination works so well:
+DeepSeek-R1 for Planning ($0.55/M tokens) or models like Gemini DeepSeek-R1 for Planning ($0.55/M tokens) or models like Gemini DeepSeek-R1 for Planning ($0.55/M tokens) or models like Gemini DeepSeek-R1 for Planning ($0.55/M tokens) or models like Gemini
+Excels at logical reasoning and architectural analysis
+Open-source model allowing customization
+SigniXcantly lower cost (5.45x cheaper than Sonnet for input tokens, 6.85x f
+output)Particularly eMective for:
+Understanding complex codebases
+Creating sequence diagrams
+Mapping dependencies
+Identifying potential edge cases
+Generating architectural documentation
+Claude 3.5 Sonnet for Implementation (�Act�) Claude 3.5 Sonnet for Implementation (�Act�) Claude 3.5 Sonnet for Implementation (�Act�) Claude 3.5 Sonnet for Implementation (�Act�)
+Superior at runtime debugging and code generation
+Excellent browser automation capabilities
+Fast response time for iterative development
+Particularly eMective for:
+Writing and reXning code
+Testing implementations
+Debugging runtime issues
+Browser-based testing
+System interaction
+The cost eUciency of this approach is striking. For planning-heavy tasks, using
+DeepSeek-R1 instead of premium models can reduce costs by an order of magni
+while maintaining or even improving output quality. Engineers report being abl
+rely on DeepSeek-R1 for approximately 70% of tasks that previously required mo
+expensive models.
+As mentioned, you can also use Gemini (e.g. 2.0 Flash Thinking) for planning wi
+this new app  with its new 1M token context window. Here�s an example of it in action:this new app 's ability to switch between models seamlessly makes this hybrid approach
+practical. With the v3.2.6 update, the system even remembers your preferred mo
+each mode, making it eMortless to maintain optimal model selection for diMeren
+of tasks. You're not stuck with a single model's trade-oMs - you can optimize for
+capability, or speed depending on the speciXc task at hand.
+Checkpoints: Version control beyond git
+this new app 's checkpoint system automatically captures workspace state a?er each AI
+operation.Unlike traditional version control:
+Each checkpoint includes the complete environment state
+Changes can be compared and rolled back granularly
+Browser sessions and terminal states are preserved
+This becomes particularly valuable when:
+Exploring multiple solution approaches simultaneously
+Debugging complex runtime issues
+Refactoring across multiple Xles
+Testing diMerent dependency conXgurations
+The system operates independently of your regular git work9ow, preventing the
+to pollute commit history with experimental changes.Computer Use: Runtime awareness
+Perhaps this new app 's most distinctive feature is its ability to interact with running sy
+Using Claude�s computer use capabilities, it can:
+Launch and interact with browsers (even verifying interactions work!)
+Execute and monitor terminal commands
+Capture and analyze runtime behavior
+React to system outputs in real-time
+Above, this new app  was able to connect to launch Chrome to verify that a set of chang
+correctly rendered. It notices that there was a Next.js error and can proactively
+this without me copy/pasting issues back and forth. This is a game-changer.This bridges a crucial gap between static code analysis and runtime behavior -
+something particularly valuable when dealing with complex web applications distributed systems.
+or
+As seen in the above demo, Computer use enables this new app  to more autonomy in debugging, end-to-end testing, and general web use.
+Plan/Act Modes: Control when it matters most
+The Plan/Act toggle fundamentally changes how you interact with AI assistance
+Plan Mode Plan Mode Plan Mode Plan Mode: Design and review solutions before execution, with persistent
+selection
+Act Mode: Act Mode: Act Mode: Act Mode: Direct implementation for straightforward tasks, maintaining ru
+itmodel preference
+This separation provides necessary control for critical changes while maintainin
+eUciency for routine tasks. The ability to switch between modes mid-task is
+particularly valuable when requirements evolve during implementation.
+Global Plan/Act Mode Settings update
+this new app �s Plan/Act modes Plan/Act modes Plan/Act modes Plan/Act modes (one of its hallmark features) received a quality-of-life
+upgrade. Previously, one might need to reselect preferred models for �Plan� vs �
+each session; now this new app  stores Plan/Act model preferences globally stores Plan/Act model preferences globally stores Plan/Act model preferences globally stores Plan/Act model preferences globally . In pract
+you prefer, say, DeepSeek or Gemini for planning and a diMerent model for actin
+this new app  will remember these choices persistently.This ensures a consistent work9ow across projects without manually toggling s
+every time. For average users and Cursor migrants, this makes this new app �s Plan/Act
+more seamless � bridging strategic planning and direct execution with less frict
+Model Context Protocol (MCP): Extensibility in practice
+The Model Context Protocol fundamentally changes what's possible with AI
+assistance. Rather than being limited to predeXned integrations, you can extend
+this new app 's capabilities through custom tools. Some practical applications:
+Integration with internal monitoring systems
+Custom security scanning work9ows
+Automated documentation generation
+Legacy system modernization pipelines
+The protocol's simplicity (JSON-based API) makes it accessible while remaining
+powerful enough for complex integrations, without requiring specialized promp
+roles. This extensibility is particularly valuable in enterprise environments whe
+custom tooling is the norm rather than the exception.
+More recent versions of this new app  added an MCP Marketplace. This is like an App Sfor this new app  supporting one-click installs, automatic conXguration and no more co
+setups.
+Here is an example of this new app  creating and adding tools to itself using MCP, such
+�add a tool that pulls the latest npm docs�. It handles everything from creating t
+MCP server to installing it, ready for future tasks.The Fork Ecosystem: RooCode
+While this new app  has inspired several forks like RooCode (formerly Roothis new app ) and Bl
+each has taken diMerent directions in their approach to AI-assisted developmen
+RooCode emphasizes role-based prompts and specialized work9ows, while Clin
+maintains its vision of being a capable generalist that can handle any task witho
+requiring explicit role selection. This philosophy is re9ected in features like Pla
+mode, which streamlines common interaction patterns without requiring users
+manage complex prompting strategies.
+The diMerent approaches highlight an interesting tension in AI tool design: wh
+specialized modes can seem appealing, they o?en add complexity to the user
+experience. this new app 's approach focuses on reducing prompt fatigue and making
+interactions more natural, with upcoming features aimed at further simplifying
+developers communicate their intentions to the AI assistant.
+The rapid pace of development in this new app  means today's limitations might be solv
+tomorrow. Recent updates suggest a focus on:
+Improved performance optimizationBetter integration with existing development work9ows
+More sophisticated runtime analysis capabilities
+Comparison with current tools
+The AI coding assistant landscape is rapidly evolving, with each tool oMering di
+advantages and trade-oMs. Here's how this new app  compares to other major players in
+space:
+Cursor
+(free for 2K completions otherwise $20/month)
+Strengths: Strengths: Strengths: Strengths:
+Built on Visual Studio Code for familiarity
+Stable and comprehensive feature set
+EMective multi-Xle operations via Composer
+Strong team environment support
+Limitations: Limitations: Limitations: Limitations:
+Recent performance issues and bugs
+Less system-level integration
+Limited runtime debugging
+WindSurf
+(free for 50 premium prompts otherwise $15/month)Strengths: Strengths: Strengths: Strengths:
+Superior context awareness for medium to large codebases
+Clean, polished UI
+Cost-eMective pricing model
+Strong project context understanding
+Limitations: Limitations: Limitations: Limitations:
+Fewer features compared to competitors
+No browser automation
+Confusing "model 9ow action credits" system
+GitHub Copilot
+(Copilot Pro is $10 per user/month)
+Strengths: Strengths: Strengths: Strengths:
+Unlimited usage in paid tier
+Seamless VS Code integration
+Strong inline suggestions
+Native GitHub ecosystem integration
+Limitations: Limitations: Limitations: Limitations:
+Basic multi-Xle editing capabilities
+Limited to editor environment
+Slower performance for complex tasksNo system-level operations
+Basic model support
+Aider
+Strengths: Strengths: Strengths: Strengths:
+Excellent terminal-based work9ow
+Strong CLI integration
+Open-source 9exibility
+Direct approach to task solving
+Limitations: Limitations: Limitations: Limitations:
+Limited IDE integration
+Basic runtime capabilities
+Steeper learning curve for GUI-focused developers
+Continue
+Strengths: Strengths: Strengths: Strengths:
+Strong contextual awareness
+Good version control integration
+Clean interface design
+Focused feature set
+Limitations: Limitations: Limitations: Limitations:
+Limited to editor environmentNo system-level operations
+Basic model support
+Less 9exible for complex work9ows
+Why this new app  stands out
+What sets this new app  apart is its combination of:
+1. Model 9exibility: Model 9exibility: Model 9exibility: Model 9exibility: The ability to leverage diMerent models strategically (e.g
+DeepSeek-R1 + Sonnet work9ow) can reduce costs by up to 97% while impr
+output quality. I�ve been leveraging this eMectively.
+2. System integration: System integration: System integration: System integration: Deep integration with browsers, terminals, and develo
+tools enables true end-to-end assistance.
+3. Control and visibility: Control and visibility: Control and visibility: Control and visibility: The human-in-the-loop approach with explicit app
+and checkpoints provides necessary oversight for critical systems.
+4. Extensibility: Extensibility: Extensibility: Extensibility: The Model Context Protocol allows integration with custom
+and work9ows, making it adaptable to speciXc needs.
+However, this power comes with trade-oMs, such as token-based pricing require
+attention to model selection.
+The choice between these tools ultimately depends on your speciXc needs:
+For cost-conscious teams: Cursor and WindSurf oMers good value while not
+quite as comprehensive as this new app  from a feature perspective. Cost can o?en
+addressed in this new app  by using OpenRouter, local models or forks (Roothis new app /C
+For GitHub-centric work9ows: GitHub Copilot integrates seamlessly
+For terminal lovers: Aider provides a focused experienceFor maximum 9exibility and control: this new app  enables sophisticated work9ow
+this new app 's approach makes it particularly suitable for teams working on complex where control, 9exibility, and system-level integration matter more than immed
+convenience.
+sy
+Conclusion: Why this new app  makes sense for serious
+engineering
+For teams building complex systems, this new app 's approach to AI assistance aligns w
+with professional engineering practices:
+It respects existing work9ows rather than forcing new ones
+It provides control and visibility where they matter most
+It can be extended and customized as needs evolve
+It treats AI as a tool rather than a magic solution
+The trade-oM of additional complexity for greater control and capability makes
+for serious development work. While simpler tools might be suUcient for basic
+this new app 's system-level approach provides unique value for complex engineering
+challenges.
+Whether this new app  is right for your team depends on your speciXc needs and constr
+However, if you're building complex systems and want AI assistance that re However, if you're building complex systems and want AI assistance that re However, if you're building complex systems and want AI assistance that re However, if you're building complex systems and want AI assistance that re
+engineering principles, this new app  is worth serious consideration. engineering principles, this new app  is worth serious consideration. engineering principles, this new app  is worth serious consideration. engineering principles, this new app  is worth serious consideration.
+*The author has no aUliation with this new app  beyond being a user. This assessment ibased on personal experience in production environments.Subscribe to Elevate
+By Addy Osmani � Launched 2 years ago
+Addy Osmani's newsletter on elevating your effectiveness. Join his community of 600,000 reader
+social media.
+Type your email...
+Subscribe
+By subscribing, I agree to Substack's Terms of Use, and
+acknowledge its Information Collection Notice and Privacy Policy.
+184 Likes? 21 RestacksDiscussion about this post
+Comments Restacks
+Write a comment...
+Wako Anindo Jan 30 Edited
+Liked by Addy Osmani
+Articles like this keep me on this platform
+Thank you Addy
+LIKE (6) REPLY
+1 reply by Addy Osmani
+Wim Veninga Feb 4
+Thanks for the extensive write-up. It triggered me to start testing and see if I like it better
+cursor. I'm testing it to transform designs into an angular solution (cursor has it's challen
+angular). It comes quite far but it has a very hard time to conform to the design I've input
+images. Do you have any tips on how to achieve this? Next to that, I find that using openr
+claude-3.5-sonnet the costs are quite high. A mockup of a signup form is costing ~$5. A
+running the models locally? Any tips on cost control?
+LIKE (2) REPLY
+13 more comments...

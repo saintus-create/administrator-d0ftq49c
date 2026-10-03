@@ -1,0 +1,300 @@
+---
+title: "@tailwind base;"
+id: "x-coredata://BB417780-B4A8-4D31-A7B7-431F20A5D60F/ICNote/p584"
+created: "20250904T135655"
+modified: "20250904T140812"
+category: "development"
+source: "notes_export.csv"
+---
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base \{
+  :root \{
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 10%;
+    --accent: 0 0% 85%;
+    --accent-foreground: 0 0% 0%;
+    --border: 0 0% 80%;
+    --input: 0 0% 80%;
+    --ring: 0 0% 0%;
+    --radius: 0.5rem;
+  \}
+
+  .dark \{
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 90%;
+    --accent: 0 0% 25%;
+    --accent-foreground: 0 0% 100%;
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 0 0% 100%;
+  \}
+\}
+
+
+
+"use client";
+import \{ ThemeProvider as NextThemesProvider \} from "next-themes";
+import \{ type ThemeProviderProps \} from "next-themes/dist/types";
+
+export function ThemeProvider(\{ children, ...props \}: ThemeProviderProps) \{
+  return \<NextThemesProvider \{...props\}\>\{children\}\</NextThemesProvider\>;
+\}
+
+
+
+import "./globals.css";
+import \{ Inter \} from "next/font/google";
+import \{ cn \} from "@/lib/utils";
+import \{ ThemeProvider \} from "@/components/theme-provider";
+
+const inter = Inter(\{ subsets: ["latin"], variable: "--font-sans" \});
+
+export default function RootLayout(\{
+  children,
+\}: \{
+  children: React.ReactNode;
+\}) \{
+  return (
+    \<html lang="en" suppressHydrationWarning\>
+      \<body
+        className=\{cn(
+          "min-h-screen bg-background font-sans antialiased",
+          inter.variable
+        )\}
+      \>
+        \<ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        \>
+          \{children\}
+        \</ThemeProvider\>
+      \</body\>
+    \</html\>
+  );
+\}
+
+
+"use client";
+import \{ useState \} from "react";
+import \{ Button \} from "@/components/ui/button";
+import \{ Card, CardContent \} from "@/components/ui/card";
+import \{ Switch \} from "@/components/ui/switch";
+import \{ Label \} from "@/components/ui/label";
+import \{
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+\} from "@/components/ui/select";
+import \{ useTheme \} from "next-themes";
+
+type Layout = "hero" | "grid" | "masonry";
+
+const snippets = [
+  "Minimal",
+  "Bold",
+  "Generative",
+  "Monochrome",
+  "Dynamic",
+  "Fluid",
+  "Hi/UX",
+  "Composer",
+];
+
+function randomItem\<T\>(arr: T[]): T \{
+  return arr[Math.floor(Math.random() * arr.length)];
+\}
+
+function range(n: number) \{
+  return [...Array(n)].map((_, i) =\> i);
+\}
+
+export default function Home() \{
+  const \{ setTheme, theme \} = useTheme();
+  const [layout, setLayout] = useState\<Layout\>("grid");
+  const [blocks, setBlocks] = useState(6);
+  const [key, setKey] = useState(0); // force remount
+
+  const regenerate = () =\> setKey((k) =\> k + 1);
+
+  const Block = (\{ index \}: \{ index: number \}) =\> \{
+    const height =
+      layout === "masonry"
+        ? `h-$\{[32, 40, 48, 64][index % 4]\}`
+        : layout === "hero" && index === 0
+        ? "h-96"
+        : "h-48";
+    return (
+      \<Card
+        key=\{index\}
+        className=\{cn(
+          "rounded-none border-2 border-foreground bg-card text-card-foreground",
+          height
+        )\}
+      \>
+        \<CardContent className="flex items-center justify-center h-full"\>
+          \<span className="text-2xl font-black uppercase tracking-widest"\>
+            \{randomItem(snippets)\}
+          \</span\>
+        \</CardContent\>
+      \</Card\>
+    );
+  \};
+
+  return (
+    \<main className="max-w-6xl mx-auto p-6 space-y-8"\>
+      \<header className="flex items-center justify-between"\>
+        \<h1 className="text-4xl font-black uppercase"\>Composer\</h1\>
+        \<div className="flex items-center gap-4"\>
+          \<div className="flex items-center gap-2"\>
+            \<Switch
+              id="mode"
+              checked=\{theme === "dark"\}
+              onCheckedChange=\{(c) =\> setTheme(c ? "dark" : "light")\}
+            /\>
+            \<Label htmlFor="mode" className="cursor-pointer"\>
+              \{theme === "dark" ? "Black" : "White"\}
+            \</Label\>
+          \</div\>
+        \</div\>
+      \</header\>
+
+      \<section className="flex items-center gap-4"\>
+        \<Select value=\{layout\} onValueChange=\{(v) =\> setLayout(v as Layout)\}\>
+          \<SelectTrigger className="w-40"\>
+            \<SelectValue /\>
+          \</SelectTrigger\>
+          \<SelectContent\>
+            \<SelectItem value="hero"\>Hero\</SelectItem\>
+            \<SelectItem value="grid"\>Grid\</SelectItem\>
+            \<SelectItem value="masonry"\>Masonry\</SelectItem\>
+          \</SelectContent\>
+        \</Select\>
+
+        \<Select
+          value=\{String(blocks)\}
+          onValueChange=\{(v) =\> setBlocks(Number(v))\}
+        \>
+          \<SelectTrigger className="w-40"\>
+            \<SelectValue /\>
+          \</SelectTrigger\>
+          \<SelectContent\>
+            \{[3, 6, 9, 12].map((n) =\> (
+              \<SelectItem key=\{n\} value=\{String(n)\}\>
+                \{n\} blocks
+              \</SelectItem\>
+            ))\}
+          \</SelectContent\>
+        \</Select\>
+
+        \<Button onClick=\{regenerate\} variant="outline"\>
+          Generate
+        \</Button\>
+      \</section\>
+
+      \<section
+        key=\{key\}
+        className=\{cn("grid gap-4", \{
+          "grid-cols-1": layout === "hero",
+          "grid-cols-1 md:grid-cols-2 lg:grid-cols-3": layout === "grid",
+          "columns-1 md:columns-2 lg:columns-3 space-y-4": layout === "masonry",
+        \})\}
+      \>
+        \{range(blocks).map((i) =\> (
+          \<Block index=\{i\} /\>
+        ))\}
+      \</section\>
+    \</main\>
+  );
+\}
+
+
+
+
+
+"use client";
+import \{ useEffect, useRef, useState \} from "react";
+import \{ useTheme \} from "next-themes";
+import \{ cn \} from "@/lib/utils";
+
+export function ModeDial() \{
+  const \{ setTheme, theme \} = useTheme();
+  const dialRef = useRef\<HTMLDivElement\>(null);
+  const [deg, setDeg] = useState(theme === "dark" ? 180 : 0);
+  const [drag, setDrag] = useState(false);
+
+  useEffect(() =\> \{
+    setDeg(theme === "dark" ? 180 : 0);
+  \}, [theme]);
+
+  const handleMove = (e: MouseEvent | TouchEvent) =\> \{
+    if (!dialRef.current) return;
+    const rect = dialRef.current.getBoundingClientRect();
+    const x = "touches" in e ? e.touches[0].clientX : e.clientX;
+    const y = "touches" in e ? e.touches[0].clientY : e.clientY;
+    const angle =
+      (Math.atan2(y - rect.top - rect.height / 2, x - rect.left - rect.width / 2) *
+        180) /
+      Math.PI;
+    const normalised = (angle + 360 + 90) % 360;
+    setDeg(normalised);
+    const grey = Math.round((normalised / 360) * 255);
+    document.documentElement.style.setProperty(
+      "--background",
+      `0 0% $\{grey\}%`
+    );
+    document.documentElement.style.setProperty(
+      "--foreground",
+      `0 0% $\{255 - grey\}%`
+    );
+  \};
+
+  const handleEnd = () =\> \{
+    setDrag(false);
+    document.removeEventListener("mousemove", handleMove);
+    document.removeEventListener("mouseup", handleEnd);
+    document.removeEventListener("touchmove", handleMove);
+    document.removeEventListener("touchend", handleEnd);
+    // snap to closest theme
+    const closest = deg \> 90 && deg \< 270 ? "dark" : "light";
+    setTheme(closest);
+  \};
+
+  const handleStart = () =\> \{
+    setDrag(true);
+    document.addEventListener("mousemove", handleMove);
+    document.addEventListener("mouseup", handleEnd);
+    document.addEventListener("touchmove", handleMove);
+    document.addEventListener("touchend", handleEnd);
+  \};
+
+  return (
+    \<div className="flex items-center gap-3 select-none"\>
+      \<span className="text-xs uppercase
